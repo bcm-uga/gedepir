@@ -23,7 +23,7 @@ Imports:
     fastICA,
     deconica,
     PREDE,
-    DSEq2
+    DESeq2
 Suggests:
     knitr,
     rmarkdown
