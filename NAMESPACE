@@ -2,6 +2,7 @@
 
 export(run_deconv)
 export(run_norm)
+export(run_trans)
 importFrom(DESeq2,"estimateSizeFactorsForMatrix")
 importFrom(NMF,"nmf")
 importFrom(PREDE,"PREDE")

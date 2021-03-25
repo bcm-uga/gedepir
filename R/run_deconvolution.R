@@ -2,11 +2,22 @@
 #'
 #'This function run a deconvolution  methods and takes as input a pre-treated gene expression matrix
 #'
-#'@param mix_matrix The convoluted pre-treated matrix patients*probes.
+#'available methods are "NMF", "ICA", "CDSeq", "PREDE", "DSA
+#'
+#'pipes from ( ... %>% )  : [data.matrix], [run_norm] , [run_trans]   
+#'
+#'pipes to ( %>% ... ) : [comp_res], [score_res]
+#'
+#'returns a list(A_matrix, T_matrix) 
+#'
+#'
+#'@param mix_matrix The convoluted (pre-treated) matrix patients *x* genes.
 #'@param k The number of cell types to estimate
 #'@param method The deconvolution method to be used 
 #'
-#'@return This function return a list with the A and the T matrices computed.
+#'@return return a list with : 
+#'A_matrix a proportion matrix   cellType *x* samples and
+#'T_matrix  a cellType reference matrix  genes *x* cellType .
 #'
 #'@importFrom NMF "nmf"
 #'@importFrom fastICA "fastICA"

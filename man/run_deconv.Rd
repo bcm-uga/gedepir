@@ -7,15 +7,26 @@
 run_deconv(mix_matrix, k = 5, method)
 }
 \arguments{
-\item{mix_matrix}{The convoluted pre-treated matrix patients*probes.}
+\item{mix_matrix}{The convoluted (pre-treated) matrix patients \emph{x} genes.}
 
 \item{k}{The number of cell types to estimate}
 
 \item{method}{The deconvolution method to be used}
 }
 \value{
-This function return a list with the A and the T matrices computed.
+return a list with :
+A_matrix a proportion matrix   cellType \emph{x} samples and
+T_matrix  a cellType reference matrix  genes \emph{x} cellType .
 }
 \description{
 This function run a deconvolution  methods and takes as input a pre-treated gene expression matrix
+}
+\details{
+available methods are "NMF", "ICA", "CDSeq", "PREDE", "DSA
+
+pipes from ( ... \%>\% )  : \link{data.matrix}, \link{run_norm} , \link{run_trans}
+
+pipes to ( \%>\% ... ) : \link{comp_res}, \link{score_res}
+
+returns a list(A_matrix, T_matrix)
 }

@@ -7,14 +7,14 @@
 run_norm(mix_matrix, method, gene_length_bp = NULL)
 }
 \arguments{
-\item{mix_matrix}{The convoluted pre-treated matrix patients*probes.}
+\item{mix_matrix}{The raw gene count matrix samples \emph{x} genes.}
 
-\item{method}{The normalisation method to be used}
+\item{method}{The normalization method to be used}
 
 \item{meta}{The count matrix metadata}
 }
 \value{
-This function return a  gene expression matrix
+This function return a matrix  samples \emph{x} genes
 }
 \description{
 This function run a RNAseq count normalisation methods and takes as input a raw gene expression matrix
@@ -23,4 +23,10 @@ This function run a RNAseq count normalisation methods and takes as input a raw 
 available methods are "DSEq2", "TPM", "RPM", "CPM", "edgeR"
 
 TPM  and RKPM methods require gene length argument
+
+#'pipes from ( ... \%>\% )  :  \link{data.matrix}
+
+pipes to ( \%>\% ... ) :  \link{run_trans} , \link{run_deconv}
+
+returns a matrix
 }

@@ -6,11 +6,18 @@
 #'
 #'TPM  and RKPM methods require gene length argument
 #'
-#'@param mix_matrix The convoluted pre-treated matrix patients*probes.
-#'@param meta The count matrix metadata
-#'@param method The normalisation method to be used 
+#'#'pipes from ( ... %>% )  :  [data.matrix]
 #'
-#'@return This function return a  gene expression matrix
+#'pipes to ( %>% ... ) :  [run_trans] , [run_deconv]   
+#'
+#'returns a matrix 
+#'
+#'
+#'@param mix_matrix The raw gene count matrix samples *x* genes.
+#'@param meta The count matrix metadata
+#'@param method The normalization method to be used 
+#'
+#'@return This function return a matrix  samples *x* genes
 #'
 #'
 #'@importFrom DESeq2 "estimateSizeFactorsForMatrix"
