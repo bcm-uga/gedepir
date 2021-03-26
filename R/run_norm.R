@@ -58,11 +58,12 @@ run_norm <- function(mix_matrix, method, gene_length_bp=NULL) {
   else if (method %in%  c("TPM")) {
     A= mix_matrix*1e3 / gene_length_bp  
     ## A = TotalReadPerGene*1e3/GeneLengthBp
-    norm.counts <- A*1e6 /sum(A)         
+    norm.counts <- sweep(A*1e6 , 2, colSums(mix_matrix), FUN="/")      
     ## TPM = A * 1/sum(A) *1e6
   }
   else if (method %in%  c("RKPM")) {
-    norm.counts <- mix_matrix*1e9 / (sum(mix_matrix)*gene_length_bp) 
+    # norm.counts <- mix_matrix*1e9 / (sum(mix_matrix)*gene_length_bp) 
+    norm.counts <- sweep(mix_matrix*1e9 , 2, colSums(mix_matrix)*gene_length_bp, FUN="/")
     ## RKPM =TotalReadPerGene*1e9 / (TotalMappedRead*GeneLengthBp)
     
   }

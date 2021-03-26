@@ -20,7 +20,7 @@ This function return a matrix  samples \emph{x} genes
 This function run a RNAseq count normalisation methods and takes as input a raw gene expression matrix
 }
 \details{
-available methods are "DSEq2", "TPM", "RPM", "CPM", "edgeR"
+available methods are "DESeq2", "TPM", "RPM", "CPM", "edgeR"
 
 TPM  and RKPM methods require gene length argument
 
