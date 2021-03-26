@@ -2,7 +2,7 @@
 #'
 #'This function run a RNAseq count normalisation methods and takes as input a raw gene expression matrix
 #'
-#'available methods are "DSEq2", "TPM", "RPM", "CPM", "edgeR"
+#'available methods are "DESeq2", "TPM", "RPM", "CPM", "edgeR"
 #'
 #'TPM  and RKPM methods require gene length argument
 #'
@@ -25,10 +25,10 @@
 #'@export
 
 run_norm <- function(mix_matrix, method, gene_length_bp=NULL) {
-  if ( !{ method %in% c("DSEq2", "TPM", "RPM", "CPM", "edgeR") } ) {
+  if ( !{ method %in% c("DESeq2", "TPM", "RPM", "CPM", "edgeR") } ) {
     print("Unknown method argument, please specify a method within the following list: DSEq2, edgeR, TPM")
   }
-  if (method == "DSEq2") {
+  if (method == "DESeq2") {
   size.factor <- DESeq2::estimateSizeFactorsForMatrix(mix_matrix) ## first calculate the size factors
   norm.counts <- sweep(mix_matrix, 2, size.factor, "/")  ### divide by tje SF
   #norm.counts.pseudoc.count.log2 <- log2(norm.counts + 1) ## If you nedd the pseudocounts ...
