@@ -8,6 +8,8 @@
 #'
 #'pseudoLog : f(x)=asinh(x)
 #'
+#'linear: f(x) = x
+#'
 #'pipes from ( ... %>% )  : [data.matrix] , [run_norm]   
 #'
 #'pipes to ( %>% ... ) : [run_deconv]
@@ -24,10 +26,11 @@
 
 
 run_trans <- function(mix_matrix, method) {
-  if ( !{ method %in% c("log2", "pseudoLog", "pseudolog") } ) {
+  if ( !{ method %in% c("log2", "pseudoLog", "pseudolog", "linear") } ) {
     print("Unknown method argument, please specify a method within the following list: log2, pseudoLog, pseudolog")
   }
-  if (method == "log2") {
+  if (method == "linear") trans.mat= mix_matrix
+  else if (method == "log2") {
     trans.mat = log2(1 + mix_matrix)
   }
   else if (method %in% c("pseudolog", "pseudoLog"))

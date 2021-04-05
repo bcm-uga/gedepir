@@ -11,7 +11,7 @@ run_norm(mix_matrix, method, gene_length_bp = NULL)
 
 \item{method}{The normalization method to be used}
 
-\item{meta}{The count matrix metadata}
+\item{gene_length_bp}{The gene length in bp}
 }
 \value{
 This function return a matrix  samples \emph{x} genes

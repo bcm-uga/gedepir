@@ -14,8 +14,8 @@
 #'
 #'
 #'@param mix_matrix The raw gene count matrix samples *x* genes.
-#'@param meta The count matrix metadata
 #'@param method The normalization method to be used 
+#'@param gene_length_bp The gene length in bp
 #'
 #'@return This function return a matrix  samples *x* genes
 #'
@@ -59,7 +59,7 @@ run_norm <- function(mix_matrix, method, gene_length_bp=NULL) {
     A= mix_matrix*1e3 / gene_length_bp  
     ## A = TotalReadPerGene*1e3/GeneLengthBp
     norm.counts <- sweep(A*1e6 , 2, colSums(mix_matrix), FUN="/")      
-    ## TPM = A * 1/sum(A) *1e6
+    ## TPM = A * 1/ TotalMappedRead*1e6
   }
   else if (method %in%  c("RKPM")) {
     # norm.counts <- mix_matrix*1e9 / (sum(mix_matrix)*gene_length_bp) 

@@ -24,6 +24,8 @@ log2 : f(x)=log2(x+1)
 
 pseudoLog : f(x)=asinh(x)
 
+linear: f(x) = x
+
 pipes from ( ... \%>\% )  : \link{data.matrix} , \link{run_norm}
 
 pipes to ( \%>\% ... ) : \link{run_deconv}

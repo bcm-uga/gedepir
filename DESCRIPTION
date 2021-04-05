@@ -23,7 +23,9 @@ Imports:
     fastICA,
     deconica,
     PREDE,
-    DESeq2
+    DESeq2,
+    pheatmap,
+    clue
 Suggests:
     knitr,
     rmarkdown
