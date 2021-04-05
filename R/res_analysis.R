@@ -2,7 +2,7 @@
 #'
 #'This function compares a deconvolution result with its reference 
 #'
-#'#'pipes from ( ... %>% )  :  [run_deconv]
+#'#'pipes from ( ... %>% )  :  [run_deconv]nts <- sweep(mix_matrix*1e6 , 2, colSums(mix_matrix), FUN="/") 
 #'
 #'pipes to ( %>% ... ) :  [score_res]   
 #'
@@ -19,7 +19,7 @@
 #'
 #'@export
 
-comp_res <- function(res =res , ref = ref , pipe=TRUE)
+comp_res <- function(res = res_ , ref = ref_ , pipe=TRUE)
 {
   A_est=res$A_matrix
   A_ref=ref$A_matrix
@@ -32,10 +32,10 @@ comp_res <- function(res =res , ref = ref , pipe=TRUE)
              ,T_ref)
   row.names(cmat_T)=row.names(cmat_A)
   cor_plot(cmat_T, main="T cor")
-  if(pipe) return(res)
+  if(pipe) return(res_=res)
 }
 
-cor_plot <-function(c_mat = c_mat, ...)
+cor_plot <-function(c_mat = c_mat_, ...)
 {
   ord_c=clue::solve_LSAP(c_mat-min(c_mat)
                          ,maximum = TRUE
@@ -67,11 +67,17 @@ cor_plot <-function(c_mat = c_mat, ...)
 #'
 #'
 #'@export
-score_res <- function(res =res , ref = ref , pipe=TRUE)
+score_res <- function(res = res_ , ref = ref_ , pipe = TRUE)
 {
-  scoring_function(Aest = res$A_matrix
+  sc = scoring_function(Aest = res$A_matrix
                    , Aref =  ref$A_matrix 
                    , Tref = ref$T_matrix)  
+  if(pipe) {
+    print(sc)
+    return(res_=res)
+  }
+  else
+    return(sc)
 }
 
 
