@@ -4,7 +4,13 @@
 \alias{run_deconv}
 \title{Function to run deconvolution methods.}
 \usage{
-run_deconv(mix_matrix, k = 5, method)
+run_deconv(
+  mix_matrix,
+  k = 5,
+  method = "NMF",
+  gene_length = NULL,
+  gene_id = NULL
+)
 }
 \arguments{
 \item{mix_matrix}{The convoluted (pre-treated) matrix patients \emph{x} genes.}

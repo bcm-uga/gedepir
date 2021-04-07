@@ -69,6 +69,40 @@ run_norm <- function(mix_matrix, method, gene_length_bp=NULL) {
   }
   
   return(norm.counts)
-  }
+}
 
+# # from https://doi.org/10.1186/s12859-018-2246-7 supp File 4 : 
+# # geneID from Ensembl  used as row names in data matrix (x)
+# # first column in (x) holds the gene length in kb and the 
+# # remaining columns contain read counts of each sample.
+# #
+# # calculate RPK
+# rpk <- (x[,2:ncol(x)]/x[,1])
+# # remove length col in x
+# x <- x[,-1]
+# # for normalization purposes, no grouping of samples
+# group <- c(rep("A",ncol(x)))
+# #EdgeR
+# x.norm.edger <- DGEList(counts=x,group=group)
+# x.norm.edger <- calcNormFactors(x.norm.edger)
+# norm.counts.edger <- cpm(x.norm.edger)
+# 
+# #GeTMM
+# rpk.norm <- DGEList(counts=rpk,group=group)
+# rpk.norm <- calcNormFactors(rpk.norm)
+# norm.counts.rpk_edger <- cpm(rpk.norm)
+# 
+# #TPM
+# tpm = rpk
+# for (i in 1:ncol(rpk) ) {
+#   tpm[,i] <- rpk[,i]/(sum(rpk[,i])/1e6)
+# } 
 
+# #DESeq2
+# # no group & no design implemented
+# colData = data.frame(group)
+# rownames(colData)=colnames(x)
+# dds<-DESeqDataSetFromMatrix(countData=x,colData=colData, design=~ 1)
+# dds <- estimateSizeFactors(dds)
+# sizefact <- sizeFactors(dds)
+# norm.counts.deseq <- counts(dds, normalized=TRUE)

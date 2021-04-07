@@ -37,9 +37,10 @@ comp_res <- function(res = res_ , ref = ref_ , pipe=TRUE)
 
 cor_plot <-function(c_mat = c_mat_, ...)
 {
-  ord_c=clue::solve_LSAP(c_mat-min(c_mat)
-                         ,maximum = TRUE
-  )
+  ord_c <- c(clue::solve_LSAP((1+c_mat)^2,maximum = TRUE))
+  #ord_c=clue::solve_LSAP(c_mat-min(c_mat)
+  #                      ,maximum = TRUE
+  #)
   pheatmap::pheatmap(c_mat[,ord_c]
                      ,cluster_rows = FALSE
                      , cluster_cols = FALSE

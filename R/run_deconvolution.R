@@ -27,7 +27,7 @@
 #'
 #'@export
 #'
-run_deconv <- function(mix_matrix, k =5, method) {
+run_deconv <- function(mix_matrix, k =5, method = "NMF" , gene_length = NULL , gene_id = NULL) {
 
   
   if ( !{ method %in% c("NMF", "ICA", "CDSeq", "PREDE", "DSA") } ) {
@@ -48,6 +48,7 @@ run_deconv <- function(mix_matrix, k =5, method) {
     A_matrix <- A
     T_matrix <- res@fit@W
     remove(list = "res")
+    row.names(A_matrix)=paste("NC",1:k, sep= "")
   }
   
   if (method == "ICA") {
@@ -81,16 +82,44 @@ run_deconv <- function(mix_matrix, k =5, method) {
     
     mat = as.matrix(mix_matrix)
     
-    feat = PREDE::select_feature(mat = mat ,method = "cv",nmarker = 1000,startn = 0)
+    #feat = PREDE::select_feature(mat = mat ,method = "cv",nmarker = 1000,startn = 0)
     
-    pred <- PREDE::PREDE(mat[feat,], W1=NULL,type = "GE",K=k,iters = 100,rssDiffStop=1e-5)
+    #pred <- PREDE::PREDE(mat[feat,], W1=NULL,type = "GE",K=k,iters = 100,rssDiffStop=1e-5)
+    pred <- PREDE::PREDE(mat
+                         , W1=NULL
+                         , type = "GE"
+                         , K=k
+                         , iters = 100
+                         , rssDiffStop=1e-5
+                         )
     
     A_matrix <- pred$H
     T_matrix <- pred$W
-    
+    row.names(A_matrix)=paste("PREDE_C",1:k, sep= "")
   }
  
-  
+  if (method == "CDSeq") {
+    library(CDSeq)
+    #samples_id= colnames(test_data_rna[[1]])
+    #row.names(mix_matrix) <- gene_id
+    #colnames(mix_matrix) <- samples_id
+    result1<-CDSeq(bulk_data =  mix_matrix
+                   , cell_type_number = k
+                   , beta = 0.5
+                   , alpha = 5
+                   , mcmc_iterations = 700
+                   , cpu_number = 8
+                   , dilution_factor = 1
+                   , block_number=4 
+                   , gene_subset_size = 5000
+                   #, gene_length = as.vector(gene_length)
+    )
+    
+    A_matrix = result1$estProp
+    T_matrix = result1$estGEP
+      
+  }
+    
   return( list(A_matrix = A_matrix,T_matrix = T_matrix) )
   
 }
