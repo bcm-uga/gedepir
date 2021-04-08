@@ -24,6 +24,7 @@
 #'@importFrom PREDE "PREDE"
 #'@importFrom deconica "generate_markers"
 #'@importFrom deconica "get_scores"
+#'@importFrom CDSeq "CDSeq"
 #'
 #'@export
 #'
@@ -35,7 +36,7 @@ run_deconv <- function(mix_matrix, k =5, method = "NMF" , gene_length = NULL , g
   }
   
   if (method == "NMF") {
-    library(NMF)
+    #library(NMF)
     res <- NMF::nmf(x = mix_matrix, rank = k, method = "snmf/r", seed = 1)
     A   <- apply(
       X      = res@fit@H
@@ -99,11 +100,11 @@ run_deconv <- function(mix_matrix, k =5, method = "NMF" , gene_length = NULL , g
   }
  
   if (method == "CDSeq") {
-    library(CDSeq)
+    #library(CDSeq)
     #samples_id= colnames(test_data_rna[[1]])
     #row.names(mix_matrix) <- gene_id
     #colnames(mix_matrix) <- samples_id
-    result1<-CDSeq(bulk_data =  mix_matrix
+    result1<-CDSeq::CDSeq(bulk_data =  mix_matrix
                    , cell_type_number = k
                    , beta = 0.5
                    , alpha = 5

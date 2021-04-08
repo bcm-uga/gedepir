@@ -25,7 +25,8 @@ Imports:
     PREDE,
     DESeq2,
     pheatmap,
-    clue
+    clue,
+    CDSeq
 Suggests:
     knitr,
     rmarkdown

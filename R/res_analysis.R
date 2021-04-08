@@ -99,7 +99,7 @@ score_res <- function(res = res_ , ref = ref_ , pipe = TRUE)
 #' @return
 #' @export
 #'
-#' @examples
+#' #' #' @examples
 merge_hc = function(A,k,T=NULL,plot=NULL,unknown_est=NULL) {
   
   if (k>=nrow(A)) k=nrow(A)
@@ -146,7 +146,7 @@ merge_hc = function(A,k,T=NULL,plot=NULL,unknown_est=NULL) {
 #'
 #' @export
 #'
-#' @examples
+#' #' #' @examples
 homgeneized_cor_mat =function(A_r, A_est) {
   cmat=cor(t(A_r),t(A_est))
   pvec <- c(clue::solve_LSAP((1+cmat)^2,maximum = TRUE))
@@ -163,7 +163,7 @@ homgeneized_cor_mat =function(A_r, A_est) {
 #' @return
 #' @export
 #'
-#' @examples
+#' #' #' @examples
 prepare_A <- function(A_r, A_est, T_ref) {
   
   N <- ncol(x = A_r)
@@ -247,7 +247,7 @@ prepare_A <- function(A_r, A_est, T_ref) {
 #' @return
 #' @export
 #'
-#' @examples
+#' #' #' @examples
 correlation_col = function (A_r , Aest_p){
   res = c()
   for(i in 1:ncol(A_r)){
@@ -295,7 +295,7 @@ eval_MAE = function (A_r , Aest_p){
 #' @return
 #' @export
 #'
-#' @examples
+#' #' #' @examples
   MAE <- function(M1, M2) {
     return(mean(x = abs(x = M1 - M2) ))
   }
@@ -314,7 +314,7 @@ eval_MAE = function (A_r , Aest_p){
 #' @return
 #' @export
 #'
-#' @examples
+#' #' #' @examples
 scoring_function <- function(Aref, Aest, Tref) {
   #  pretreatment of estimated A
   Aest_p = prepare_A(A_r = Aref, A_est = Aest, T_ref = Tref)
