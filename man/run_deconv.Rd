@@ -9,7 +9,8 @@ run_deconv(
   k = 5,
   method = "NMF",
   gene_length = NULL,
-  gene_id = NULL
+  gene_id = NULL,
+  cpu_number = NULL
 )
 }
 \arguments{

@@ -25,10 +25,11 @@
 #'@importFrom deconica "generate_markers"
 #'@importFrom deconica "get_scores"
 #'@importFrom CDSeq "CDSeq"
+#'@importFrom parallel "detectCores"
 #'
 #'@export
 #'
-run_deconv <- function(mix_matrix, k =5, method = "NMF" , gene_length = NULL , gene_id = NULL) {
+run_deconv <- function(mix_matrix, k =5, method = "NMF" , gene_length = NULL , gene_id = NULL, cpu_number = NULL) {
 
   
   if ( !{ method %in% c("NMF", "ICA", "CDSeq", "PREDE", "DSA") } ) {
@@ -104,16 +105,18 @@ run_deconv <- function(mix_matrix, k =5, method = "NMF" , gene_length = NULL , g
     #samples_id= colnames(test_data_rna[[1]])
     #row.names(mix_matrix) <- gene_id
     #colnames(mix_matrix) <- samples_id
+    nsz = ceiling(nrow(mix_matrix)*1e-3 /8)
+
     result1<-CDSeq::CDSeq(bulk_data =  mix_matrix
                    , cell_type_number = k
                    , beta = 0.5
                    , alpha = 5
-                   , mcmc_iterations = 700
-                   , cpu_number = 8
-                   , dilution_factor = 1
-                   , block_number=4 
-                   , gene_subset_size = 5000
-                   #, gene_length = as.vector(gene_length)
+                   , mcmc_iterations = 300
+                   , cpu_number =  cpu_number
+                   , dilution_factor = 5
+                   , block_number=8 
+                   , gene_subset_size = nsz*1e3
+                   , gene_length = as.vector(gene_length)
     )
     
     A_matrix = result1$estProp
