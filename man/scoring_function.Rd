@@ -7,10 +7,6 @@
 scoring_function(Aref, Aest, Tref)
 }
 \arguments{
-\item{Aref}{}
-
-\item{Aest}{}
-
 \item{Tref}{}
 }
 \value{

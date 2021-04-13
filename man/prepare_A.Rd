@@ -7,10 +7,6 @@
 prepare_A(A_r, A_est, T_ref)
 }
 \arguments{
-\item{A_r}{}
-
-\item{A_est}{}
-
 \item{T_ref}{}
 }
 \value{

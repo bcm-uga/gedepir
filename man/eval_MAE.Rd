@@ -7,8 +7,6 @@
 eval_MAE(A_r, Aest_p)
 }
 \arguments{
-\item{M1}{}
-
 \item{M2}{}
 }
 \value{

@@ -7,8 +7,6 @@
 homgeneized_cor_mat(A_r, A_est)
 }
 \arguments{
-\item{A_r}{}
-
 \item{A_est}{}
 }
 \value{

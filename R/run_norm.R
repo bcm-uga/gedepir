@@ -21,6 +21,10 @@
 #'
 #'
 #' @importFrom DESeq2 "estimateSizeFactorsForMatrix"
+#' @importFrom DESeq2 "DESeqDataSetFromMatrix"
+#' @importFrom DESeq2 "estimateSizeFactors"
+#' @importFrom DESeq2 "counts"
+#' 
 #' @importFrom edgeR "DGEList"
 #' @importFrom edgeR "estimateCommonDisp"
 #' @importFrom edgeR "calcNormFactors"
@@ -37,8 +41,16 @@ run_norm <- function(mix_matrix, method, gene_length_bp = NULL, group = NULL) {
   if (is.null(group)) group <- rep("a", ncol(mix_matrix))
 
   if (method == "DESeq2") {
-    size.factor <- DESeq2::estimateSizeFactorsForMatrix(mix_matrix) ## first calculate the size factors
-    norm.counts <- sweep(mix_matrix, 2, size.factor, "/") ### divide by tje SF
+    group <- rep("1", ncol(mix_matrix))
+    colData = data.frame(group)
+    rownames(colData)=colnames(mix_matrix)
+    dds<-DESeq2::DESeqDataSetFromMatrix(countData=round(mix_matrix),colData=colData, design=~ 1)
+    dds <- DESeq2::estimateSizeFactors(dds)
+    sizefact <- DESeq2::sizeFactors(dds)
+    norm.counts <- DESeq2::counts(dds, normalized=TRUE)
+    
+        # size.factor <- DESeq2::estimateSizeFactorsForMatrix(mix_matrix) ## first calculate the size factors
+    # norm.counts <- sweep(mix_matrix, 2, size.factor, "/") ### divide by tje SF
   }
   if (method == "MR") {
     count_mtx <- mix_matrix

@@ -7,8 +7,6 @@
 correlation_col(A_r, Aest_p)
 }
 \arguments{
-\item{A_r}{}
-
 \item{Aest_p}{}
 }
 \value{

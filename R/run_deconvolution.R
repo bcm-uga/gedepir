@@ -106,7 +106,15 @@ run_deconv <- function(mix_matrix, k = 5, method = "NMF", gene_length = NULL, ge
     # row.names(mix_matrix) <- gene_id
     # colnames(mix_matrix) <- samples_id
     nsz <- ceiling(nrow(mix_matrix) * 1e-3 / 8)
-
+    nblock <- ceiling(nrow(mix_matrix) / (nsz*1e3))
+    redFact=2^(1+ (median(log2(1+mix_matrix[mix_matrix>0])) %5% 5))
+    print(sprintf(
+      "%d var in %d blocks of size %d with reduce factor %d",
+      nrow(mix_matrix),
+      nblock,
+      nsz*1e3,
+      redFact
+    ))
     result1 <- CDSeq::CDSeq(
       bulk_data = mix_matrix,
       cell_type_number = k,
@@ -114,8 +122,8 @@ run_deconv <- function(mix_matrix, k = 5, method = "NMF", gene_length = NULL, ge
       alpha = 5,
       mcmc_iterations = 300,
       cpu_number = cpu_number,
-      dilution_factor = 5,
-      block_number = 8,
+      dilution_factor = redFact,
+      block_number = nblock,
       gene_subset_size = nsz * 1e3,
       gene_length = as.vector(gene_length)
     )

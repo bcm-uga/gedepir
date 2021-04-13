@@ -7,12 +7,6 @@
 merge_hc(A, k, T = NULL, plot = NULL, unknown_est = NULL)
 }
 \arguments{
-\item{A}{}
-
-\item{k}{}
-
-\item{plot}{}
-
 \item{unknown_est}{}
 }
 \value{
