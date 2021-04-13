@@ -21,32 +21,45 @@
 #'
 #'
 #'@importFrom DESeq2 "estimateSizeFactorsForMatrix"
+#'@importFrom edgeR "DGEList"
+#'@importFrom edgeR "estimateCommonDisp"
+#'@importFrom edgeR "calcNormFactors"
 #'
 #'@export
 
-run_norm <- function(mix_matrix, method, gene_length_bp=NULL) {
-  if ( !{ method %in% c("DESeq2", "TPM", "RPM", "CPM", "edgeR") } ) {
+run_norm <- function(mix_matrix, method, gene_length_bp=NULL, group=NULL) {
+  
+  
+  if ( !{ method %in% c("DESeq2", "TPM", "RPM", "CPM", "edgeR", "MR") } ) {
     print("Unknown method argument, please specify a method within the following list: DSEq2, edgeR, TPM")
   }
+  
+  if(is.null(group)) group=rep("a", ncol(mix_matrix))
+  
   if (method == "DESeq2") {
-  size.factor <- DESeq2::estimateSizeFactorsForMatrix(mix_matrix) ## first calculate the size factors
-  norm.counts <- sweep(mix_matrix, 2, size.factor, "/")  ### divide by tje SF
-  #norm.counts.pseudoc.count.log2 <- log2(norm.counts + 1) ## If you nedd the pseudocounts ...
-  # estimsF is  DESq2::estimateSizeFactorsForMatrix
-  # estimSf <- function (count_mtx){
-  #   # Compute the geometric mean
-  #   geomMean <- function(x) prod(x)^(1/length(x))
-  #   # Compute the geometric mean over the line
-  #   gm.mean <- apply(count_mtx, 1, geomMean)
-  #   # Zero values are set to NA (avoid subsequentcdsdivision by 0)
-  #   gm.mean[gm.mean == 0] <- NA
-  #   # Divide each line by its corresponding geometric mean
-  #   cts <- sweep(count_mtx, 1, gm.mean, FUN="/")
-  #   # Compute the median over the columns
-  #   sFactor <- apply(cts, 2, median, na.rm=TRUE)
-  #   # Return the scaling factor
-  #   return(sFactor)
-  # }
+    size.factor <- DESeq2::estimateSizeFactorsForMatrix(mix_matrix) ## first calculate the size factors
+    norm.counts <- sweep(mix_matrix, 2, size.factor, "/")  ### divide by tje SF
+  }
+  if (method == "MR") {
+    count_mtx=mix_matrix
+    #estimsF is  DESq2::estimateSizeFactorsForMatrix
+    # estimSf <- function (count_mtx){
+    #   # Compute the geometric mean
+    geomMean <- function(x) prod(x)^(1/length(x))
+    # Compute the geometric mean over the line
+    gm.mean <- apply(count_mtx, 1, geomMean)
+    # Zero values are set to NA (avoid subsequentcdsdivision by 0)
+    gm.mean[gm.mean == 0] <- NA
+    # Divide each line by its corresponding geometric mean
+    cts <- sweep(count_mtx, 1, gm.mean, FUN="/")
+    # Compute the median over the columns
+    sFactor <- apply(cts, 2, median, na.rm=TRUE)
+    # Return the scaling factor
+    #   return(sFactor)
+    # }
+    # size.factor <- estimSf(mix_matrix) ## first calculate the size factors
+    norm.counts <- sweep(mix_matrix, 2, sFactor, "/")  ### divide by tje SF
+    
   }
   
   else if (method %in%  c("RPM", "CPM")) {
@@ -67,7 +80,13 @@ run_norm <- function(mix_matrix, method, gene_length_bp=NULL) {
     ## RKPM =TotalReadPerGene*1e9 / (TotalMappedRead*GeneLengthBp)
     
   }
-  
+  else if (method %in%  c("edgeR")) {
+    d <- edgeR::DGEList(counts=mix_matrix, group=group)
+    d <- edgeR::estimateCommonDisp(d)
+    d <- edgeR::calcNormFactors(d, method="TMM")
+    norm.counts <- edgeR::cpm(d)
+    
+  }
   return(norm.counts)
 }
 

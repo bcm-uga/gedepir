@@ -38,6 +38,7 @@ run_deconv <- function(mix_matrix, k =5, method = "NMF" , gene_length = NULL , g
   
   if (method == "NMF") {
     #library(NMF)
+    #detach("package:DelayedArray")
     res <- NMF::nmf(x = mix_matrix, rank = k, method = "snmf/r", seed = 1)
     A   <- apply(
       X      = res@fit@H

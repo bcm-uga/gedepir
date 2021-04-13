@@ -4,7 +4,7 @@
 \alias{run_norm}
 \title{Function to run RNAseq count normalisation methods.}
 \usage{
-run_norm(mix_matrix, method, gene_length_bp = NULL)
+run_norm(mix_matrix, method, gene_length_bp = NULL, group = NULL)
 }
 \arguments{
 \item{mix_matrix}{The raw gene count matrix samples \emph{x} genes.}
