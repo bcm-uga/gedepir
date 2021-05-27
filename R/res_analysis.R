@@ -28,11 +28,13 @@ comp_res <- function(res = res_, ref = ref_, pipe = TRUE) {
     t(A_est),
     t(A_ref)
   )
+  #layout(matrix(c(1,2), ncol = 2))
   cor_plot(cmat_A, main = "A cor")
   cmat_T <- cor(
     T_est,
     T_ref
   )
+  print(dim(cmat_T))
   row.names(cmat_T) <- row.names(cmat_A)
   cor_plot(cmat_T, main = "T cor")
   if (pipe) {
@@ -362,4 +364,46 @@ scoring_function <- function(Aref, Aest, Tref) {
     cr_maxmin = cr_maxmin,
     cc_maxmin = cc_maxmin
   ))
+}
+
+res_heatmap = function(res = res_, ref = ref_, pipe = TRUE) {
+  A_est <- res$A_matrix
+  A_ref <- ref$A_matrix
+  T_est <- res$T_matrix
+  T_ref <- ref$T_matrix
+  cmat_A <- cor(
+    t(A_est),
+    t(A_ref)
+  )
+  cmat_T <- cor(
+    T_est,
+    T_ref
+  )
+  row.names(cmat_T) <- row.names(cmat_A)
+ row.names(cmat_T) <- row.names(cmat_A)
+ ord_c <- c(clue::solve_LSAP((1 + cmat_A)^2, maximum = TRUE))
+ lA <-
+   levelplot(
+     cmat_A[, ord_c],
+     margin = FALSE,
+     aspect = "iso",
+     scales = list(x = list(rot = 90),
+                   #y = list(rot = 90),
+                   alternating = 2)
+   )
+ ord_c <- c(clue::solve_LSAP((1 + cmat_T)^2, maximum = TRUE))
+ lT <-
+   levelplot(
+     cmat_T[, ord_c],
+     margin = FALSE,
+     aspect = "iso",
+     scales = list(x = list(rot = 90),
+                  # y = list(rot = 90),
+                   alternating = 2)
+   )
+ plot(
+   c(lA, lT),
+   merge.legends = FALSE,
+   layout = c(1, 2)
+ )
 }

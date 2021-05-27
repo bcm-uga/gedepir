@@ -21,116 +21,242 @@
 #'
 #' @importFrom NMF "nmf"
 #' @importFrom fastICA "fastICA"
-#' @importFrom PREDE "PREDE"
-#' @importFrom deconica "generate_markers"
-#' @importFrom deconica "get_scores"
-#' @importFrom CDSeq "CDSeq"
 #' @importFrom parallel "detectCores"
 #'
 #' @export
 #'
-run_deconv <- function(mix_matrix, k = 5, method = "NMF", gene_length = NULL, gene_id = NULL, cpu_number = NULL) {
-  if (!{
-    method %in% c("NMF", "ICA", "CDSeq", "PREDE", "DSA")
-  }) {
-    print("Unknown method argument, please specify a method within the following list: NMF, ICA, CDSeq, PREDE, DSA")
-  }
+run_deconv <-
+  function(mix_matrix,
+           k = 5,
+           method = "NMF",
+           gene_length = NULL,
+           gene_id = NULL,
+           cpu_number = NULL) {
+    if (!{
+      method %in% c("NMF", "ICA", "CDSeq", "PREDE", "DSA")
+    }) {
+      print(
+        "Unknown method argument, please specify a method within the following list: NMF, ICA, CDSeq, PREDE, DSA"
+      )
+    }
 
-  if (method == "NMF") {
-    # library(NMF)
-    # detach("package:DelayedArray")
-    res <- NMF::nmf(x = mix_matrix, rank = k, method = "snmf/r", seed = 1)
-    A <- apply(
-      X = res@fit@H,
-      MARGIN = 2,
-      FUN = function(x) {
-        x / sum(x)
+    if (method == "NMF") {
+      # library(NMF)
+      # detach("package:DelayedArray")
+      res <-
+        NMF::nmf(
+          x = mix_matrix,
+          rank = k,
+          method = "snmf/r",
+          seed = 1
+        )
+      A <- apply(
+        X = res@fit@H,
+        MARGIN = 2,
+        FUN = function(x) {
+          x / sum(x)
+        }
+      )
+
+      A_matrix <- A
+      T_matrix <- res@fit@W
+      remove(list = "res")
+      row.names(A_matrix) <- paste("NC", 1:k, sep = "")
+    }
+
+    if (method == "ICA") {
+      # library(NMF)
+      # detach("package:DelayedArray")
+      rna_data <- mix_matrix[!duplicated(mix_matrix), ]
+
+      ICA_deconv <-
+        fastICA::fastICA(
+          X = rna_data,
+          n.comp = k,
+          maxit = 1000,
+          tol = 1e-09
+        )
+      ICA_deconv$names <- row.names(rna_data)
+      ## generate_markers
+      ##  deconica::generate_markers(df = ICA_deconv,
+      ## deconica::orient_func
+      sel.comp = paste("IC", 1:ncol(ICA_deconv$S),sep="")
+      n=30 # default deconica value
+      thr= Inf# default deconica value
+      S <- ICA_deconv$S
+      orient <-
+        apply(S, 2, function(x) {
+          if (min(x) < -3 & max(x) > 3) {
+            ifelse(sum(x > 3) < sum(x < -3), -1, 1)
+          } else {
+            ifelse(sum(x > 2) < sum(x < -2), -1, 1)
+          }
+        })
+      S_or <- as.matrix(S) %*% diag(orient)
+      colnames(S_or) <- paste("IC", 1:ncol(S_or), sep = "")
+      row.names(S_or) <- ICA_deconv$names
+      S_or <- S_or[, sel.comp]
+      metagenes <-
+        apply(S_or, 2, function(col) {
+          data.frame(
+            GENE = row.names(S_or),
+            col
+          )
+        })
+      weight.list <- lapply(metagenes, function(x) {
+        x <- x[order(-x[, 2]), ]
+        return(x[which(x[, 2] < thr), ][1:n, ])
+      })
+      #  Use the most important genes to weight the components score
+      #  deconica::get_scores
+      ICA_scores_weighted <- sapply(weight.list, function(metagene) {
+        apply(ICA_deconv$X[metagene[, 1], ], 2, stats::weighted.mean, w = metagene[, 2])
+      })
+      tmp_dat <- t(ICA_scores_weighted)
+      colnames(tmp_dat) <- colnames(rna_data)
+      #  deconica::stacked_proportions_plot(tmp_dat)
+      A_rna <- abs(tmp_dat) %*% diag(1 / colSums(abs(tmp_dat)))
+      # A_rna = matrix(tmp_rna)
+
+      A_matrix <- A_rna
+      T_matrix <- ICA_deconv$S
+      # OTHER APPROACH with NMF
+      # Ap=ICA_deconv$A ; Ap[ICA_deconv$A<0] =0
+      # Am=-ICA_deconv$A ; Am[ICA_deconv$A>0] =0
+      #
+      # Aa=rbind(Ap,Am)
+      # Aa=Aa[apply(Aa, 1, var)>0 ,]
+      # res <-
+      #   NMF::nmf(
+      #     x = Aa,
+      #     rank = k,
+      #     #method = "snmf/r",
+      #     method = "lee",
+      #     seed = 1
+      #   )
+      # A <- apply(
+      #   X = res@fit@H,
+      #   MARGIN = 2,
+      #   FUN = function(x) {
+      #     x / sum(x)
+      #   }
+      # )
+      #
+      # A_matrix <- A
+      # Ainv=MASS::ginv(A_matrix)
+      # T_matrix= mix_matrix %*% Ainv
+      # #T_matrix <- res@fit@W
+      # remove(list = "res")
+      # row.names(A_matrix) <- paste("NC", 1:k, sep = "")
+      # colnames(T_matrix) <- paste("NC", 1:k, sep = "")
+    }
+
+    if (method == "ICA-deconica") {
+      if (!requireNamespace("deconica", quietly = TRUE)) {
+        stop("Package \"deconica\" needed for this function to work. Please install it.",
+          call. = FALSE
+        )
       }
-    )
+      rna_data <- mix_matrix[!duplicated(mix_matrix), ]
 
-    A_matrix <- A
-    T_matrix <- res@fit@W
-    remove(list = "res")
-    row.names(A_matrix) <- paste("NC", 1:k, sep = "")
+      ICA_deconv <-
+        fastICA::fastICA(
+          X = rna_data,
+          n.comp = k,
+          maxit = 1000,
+          tol = 1e-09
+        )
+      ICA_deconv$names <- row.names(rna_data)
+      weighted.list <- deconica::generate_markers(
+        df = ICA_deconv,
+        n = 30,
+        return = "gene.ranked"
+      )
+
+      # Use the most important genes to weight the components score
+      ICA_scores_weighted <-
+        deconica::get_scores(ICA_deconv$X,
+          weighted.list,
+          summary = "weighted.mean",
+          na.rm = TRUE
+        )
+
+
+
+      # Extract the proportion from the weighted scores
+      tmp_dat <- t(ICA_scores_weighted)
+      colnames(tmp_dat) <- colnames(rna_data)
+      # tmp_rna = deconica::stacked_proportions_plot(tmp_dat)
+      A_rna <- abs(tmp_dat) %*% diag(1 / colSums(abs(tmp_dat)))
+      # A_rna = matrix(tmp_rna)
+
+      A_matrix <- A_rna
+      T_matrix <- ICA_deconv$S
+    }
+
+    if (method == "PREDE") {
+      if (!requireNamespace("PREDE", quietly = TRUE)) {
+        stop("Package \"PREDE\" needed for this function to work. Please install it.",
+          call. = FALSE
+        )
+      }
+      mat <- as.matrix(mix_matrix)
+
+      # feat = PREDE::select_feature(mat = mat ,method = "cv",nmarker = 1000,startn = 0)
+
+      # pred <- PREDE::PREDE(mat[feat,], W1=NULL,type = "GE",K=k,iters = 100,rssDiffStop=1e-5)
+      pred <- PREDE::PREDE(
+        mat,
+        W1 = NULL,
+        type = "GE",
+        K = k,
+        iters = 100,
+        rssDiffStop = 1e-5
+      )
+
+      A_matrix <- pred$H
+      T_matrix <- pred$W
+      row.names(A_matrix) <- paste("PREDE_C", 1:k, sep = "")
+    }
+
+    if (method == "CDSeq") {
+      if (!requireNamespace("CDSeq", quietly = TRUE)) {
+        stop("Package \"CDSeq\" needed for this function to work. Please install it.",
+          call. = FALSE
+        )
+      }
+      # library(CDSeq)
+      # samples_id= colnames(test_data_rna[[1]])
+      # row.names(mix_matrix) <- gene_id
+      # colnames(mix_matrix) <- samples_id
+      nsz <- ceiling(nrow(mix_matrix) * 1e-3 / 8)
+      nblock <- ceiling(nrow(mix_matrix) / (nsz * 1e3))
+      redFact <- 2^(1 + (median(log2(1 + mix_matrix[mix_matrix > 0])) %/% 5))
+      print(
+        sprintf(
+          "%d var in %d blocks of size %d with reduce factor %d",
+          nrow(mix_matrix),
+          nblock,
+          nsz * 1e3,
+          redFact
+        )
+      )
+      result1 <- CDSeq::CDSeq(
+        bulk_data = mix_matrix,
+        cell_type_number = k,
+        beta = 0.5,
+        alpha = 5,
+        mcmc_iterations = 300,
+        cpu_number = cpu_number,
+        dilution_factor = redFact,
+        block_number = nblock,
+        gene_subset_size = nsz * 1e3,
+        gene_length = as.vector(gene_length)
+      )
+
+      A_matrix <- result1$estProp
+      T_matrix <- result1$estGEP
+    }
+
+    return(list(A_matrix = A_matrix, T_matrix = T_matrix))
   }
-
-  if (method == "ICA") {
-    rna_data <- mix_matrix[!duplicated(mix_matrix), ]
-
-    ICA_deconv <- fastICA::fastICA(X = rna_data, n.comp = k, maxit = 1000, tol = 1e-09)
-    ICA_deconv$names <- row.names(rna_data)
-    weighted.list <- deconica::generate_markers(
-      df = ICA_deconv,
-      n = 30,
-      return = "gene.ranked"
-    )
-
-    # Use the most important genes to weight the components score
-    ICA_scores_weighted <- deconica::get_scores(ICA_deconv$X, weighted.list, summary = "weighted.mean", na.rm = TRUE)
-
-
-
-    # Extract the proportion from the weighted scores
-    tmp_dat <- t(ICA_scores_weighted)
-    colnames(tmp_dat) <- colnames(rna_data)
-    # tmp_rna = deconica::stacked_proportions_plot(tmp_dat)
-    A_rna <- abs(tmp_dat) %*% diag(1 / colSums(abs(tmp_dat)))
-    # A_rna = matrix(tmp_rna)
-
-    A_matrix <- A_rna
-    T_matrix <- ICA_deconv$S
-  }
-
-  if (method == "PREDE") {
-    mat <- as.matrix(mix_matrix)
-
-    # feat = PREDE::select_feature(mat = mat ,method = "cv",nmarker = 1000,startn = 0)
-
-    # pred <- PREDE::PREDE(mat[feat,], W1=NULL,type = "GE",K=k,iters = 100,rssDiffStop=1e-5)
-    pred <- PREDE::PREDE(mat,
-      W1 = NULL,
-      type = "GE",
-      K = k,
-      iters = 100,
-      rssDiffStop = 1e-5
-    )
-
-    A_matrix <- pred$H
-    T_matrix <- pred$W
-    row.names(A_matrix) <- paste("PREDE_C", 1:k, sep = "")
-  }
-
-  if (method == "CDSeq") {
-    # library(CDSeq)
-    # samples_id= colnames(test_data_rna[[1]])
-    # row.names(mix_matrix) <- gene_id
-    # colnames(mix_matrix) <- samples_id
-    nsz <- ceiling(nrow(mix_matrix) * 1e-3 / 8)
-    nblock <- ceiling(nrow(mix_matrix) / (nsz*1e3))
-    redFact=2^(1+ (median(log2(1+mix_matrix[mix_matrix>0])) %/% 5))
-    print(sprintf(
-      "%d var in %d blocks of size %d with reduce factor %d",
-      nrow(mix_matrix),
-      nblock,
-      nsz*1e3,
-      redFact
-    ))
-    result1 <- CDSeq::CDSeq(
-      bulk_data = mix_matrix,
-      cell_type_number = k,
-      beta = 0.5,
-      alpha = 5,
-      mcmc_iterations = 300,
-      cpu_number = cpu_number,
-      dilution_factor = redFact,
-      block_number = nblock,
-      gene_subset_size = nsz * 1e3,
-      gene_length = as.vector(gene_length)
-    )
-
-    A_matrix <- result1$estProp
-    T_matrix <- result1$estGEP
-  }
-
-  return(list(A_matrix = A_matrix, T_matrix = T_matrix))
-}

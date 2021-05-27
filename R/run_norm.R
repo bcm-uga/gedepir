@@ -20,14 +20,6 @@
 #' @return This function return a matrix  samples *x* genes
 #'
 #'
-#' @importFrom DESeq2 "estimateSizeFactorsForMatrix"
-#' @importFrom DESeq2 "DESeqDataSetFromMatrix"
-#' @importFrom DESeq2 "estimateSizeFactors"
-#' @importFrom DESeq2 "counts"
-#' 
-#' @importFrom edgeR "DGEList"
-#' @importFrom edgeR "estimateCommonDisp"
-#' @importFrom edgeR "calcNormFactors"
 #'
 #' @export
 
@@ -35,12 +27,16 @@ run_norm <- function(mix_matrix, method, gene_length_bp = NULL, group = NULL) {
   if (!{
     method %in% c("DESeq2", "TPM", "RPM", "CPM", "edgeR", "MR")
   }) {
-    print("Unknown method argument, please specify a method within the following list: DSEq2, edgeR, TPM")
+    print("Unknown method argument, please specify a method within the following list: DESeq2 TPM RPM CPM edgeR MR")
   }
 
   if (is.null(group)) group <- rep("a", ncol(mix_matrix))
 
   if (method == "DESeq2") {
+    if (!requireNamespace("DESeq2", quietly = TRUE)) {
+      stop("Package \"DESeq2\" needed for this function to work. Please install it.",
+           call. = FALSE)
+    }
     group <- rep("1", ncol(mix_matrix))
     colData = data.frame(group)
     rownames(colData)=colnames(mix_matrix)
@@ -79,17 +75,29 @@ run_norm <- function(mix_matrix, method, gene_length_bp = NULL, group = NULL) {
   }
 
   else if (method %in% c("TPM")) {
+    if (is.null(gene_length_bp)) {
+      stop("Methode \"TPM\" needs gene length as gene_length_bp ",
+           call. = FALSE)
+    }
     A <- mix_matrix * 1e3 / gene_length_bp
     ## A = TotalReadPerGene*1e3/GeneLengthBp
     norm.counts <- sweep(A * 1e6, 2, colSums(mix_matrix), FUN = "/")
     ## TPM = A * 1/ TotalMappedRead*1e6
   }
   else if (method %in% c("RKPM")) {
+    if (is.null(gene_length_bp)) {
+      stop("Methode \"RKPM\" needs gene length as gene_length_bp ",
+           call. = FALSE)
+    }
     # norm.counts <- mix_matrix*1e9 / (sum(mix_matrix)*gene_length_bp)
     norm.counts <- sweep(mix_matrix * 1e9, 2, colSums(mix_matrix) * gene_length_bp, FUN = "/")
     ## RKPM =TotalReadPerGene*1e9 / (TotalMappedRead*GeneLengthBp)
   }
   else if (method %in% c("edgeR")) {
+    if (!requireNamespace("edgeR", quietly = TRUE)) {
+      stop("Package \"edgeR\" needed for this function to work. Please install it.",
+           call. = FALSE)
+    }
     d <- edgeR::DGEList(counts = mix_matrix, group = group)
     d <- edgeR::estimateCommonDisp(d)
     d <- edgeR::calcNormFactors(d, method = "TMM")

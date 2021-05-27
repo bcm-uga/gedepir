@@ -15,12 +15,19 @@
 #'
 #' @return This function return a matrix  samples *x* genes
 #'
-#' @importFrom PREDE  "select_feature"
-#'
 #' @export
 
 
 run_featsel <- function(mix_matrix, method) {
+  cv_sel <- function(mat, nmarker) {
+    mm <- apply(mat,1,mean)
+    vv <- apply(mat,1,var)
+    cv <- sqrt(vv) / (mm + 1)
+    cv[is.na(cv)] <- 0
+    ix <- sort(cv, dec = TRUE, index = TRUE)$ix
+    index.select <- rownames(mat)[ix[1:nmarker]]
+    return(mat[index.select, ])
+  }
   if (!{
     method %in% c("cv1000", "cv5000", "none")
   }) {
@@ -29,11 +36,11 @@ run_featsel <- function(mix_matrix, method) {
   if (method == "none") {
     sel.mat <- mix_matrix
   } else if (method == "cv1000") {
-    feat <- PREDE::select_feature(mat = mix_matrix, method = "cv", nmarker = 1000, startn = 0)
-    sel.mat <- mix_matrix[feat, ]
+    nmarker <- 1000
+    sel.mat <- cv_sel(mix_matrix, nmarker)
   } else if (method == "cv5000") {
-    feat <- PREDE::select_feature(mat = mix_matrix, method = "cv", nmarker = 5000, startn = 0)
-    sel.mat <- mix_matrix[feat, ]
+    nmarker <- 5000
+    sel.mat <- cv_sel(mix_matrix, nmarker)
   }
 
   return(sel.mat)

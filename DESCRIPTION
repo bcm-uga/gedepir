@@ -21,14 +21,14 @@ Depends: R (>= 3.3)
 Imports: 
     NMF,
     fastICA,
+    pheatmap,
+    clue,
+Suggests:
     deconica,
     PREDE,
     DESeq2,
-    pheatmap,
-    clue,
     CDSeq,
     edgeR,
-Suggests:
     magrittr,
     knitr,
     rmarkdown
