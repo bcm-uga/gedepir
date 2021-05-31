@@ -25,13 +25,13 @@
 
 run_norm <- function(mix_matrix, method, gene_length_bp = NULL, group = NULL) {
   if (!{
-    method %in% c("DESeq2", "TPM", "RPM", "CPM", "edgeR", "MR")
+    method %in% c("None","DESeq2", "TPM", "RPM", "CPM", "edgeR", "MR")
   }) {
     print("Unknown method argument, please specify a method within the following list: DESeq2 TPM RPM CPM edgeR MR")
   }
 
   if (is.null(group)) group <- rep("a", ncol(mix_matrix))
-
+  if (method == "None") return(mix_matrix)
   if (method == "DESeq2") {
     if (!requireNamespace("DESeq2", quietly = TRUE)) {
       stop("Package \"DESeq2\" needed for this function to work. Please install it.",

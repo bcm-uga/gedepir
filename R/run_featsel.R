@@ -29,11 +29,11 @@ run_featsel <- function(mix_matrix, method) {
     return(mat[index.select, ])
   }
   if (!{
-    method %in% c("cv1000", "cv5000", "none")
+    method %in% c("cv1000", "cv5000", "none",  "None")
   }) {
     print("Unknown method argument, please specify a method within the following list: cv, none")
   }
-  if (method == "none") {
+  if (method %in%  c("none", "None")) {
     sel.mat <- mix_matrix
   } else if (method == "cv1000") {
     nmarker <- 1000

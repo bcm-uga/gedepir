@@ -57,7 +57,7 @@ run_deconv <-
           x / sum(x)
         }
       )
-
+      colnames(A)=colnames(mix_matrix)
       A_matrix <- A
       T_matrix <- res@fit@W
       remove(list = "res")
@@ -117,7 +117,7 @@ run_deconv <-
       #  deconica::stacked_proportions_plot(tmp_dat)
       A_rna <- abs(tmp_dat) %*% diag(1 / colSums(abs(tmp_dat)))
       # A_rna = matrix(tmp_rna)
-
+      colnames(A_rna)=colnames(mix_matrix)
       A_matrix <- A_rna
       T_matrix <- ICA_deconv$S
       # OTHER APPROACH with NMF
@@ -189,7 +189,7 @@ run_deconv <-
       # tmp_rna = deconica::stacked_proportions_plot(tmp_dat)
       A_rna <- abs(tmp_dat) %*% diag(1 / colSums(abs(tmp_dat)))
       # A_rna = matrix(tmp_rna)
-
+      colnames(A_rna)=colnames(mix_matrix)
       A_matrix <- A_rna
       T_matrix <- ICA_deconv$S
     }
