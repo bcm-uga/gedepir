@@ -23,6 +23,7 @@ Imports:
     fastICA,
     pheatmap,
     clue,
+    fgsea
 Suggests:
     deconica,
     PREDE,
