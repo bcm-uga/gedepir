@@ -18,3 +18,5 @@ importFrom(clue,"solve_LSAP")
 importFrom(fastICA,"fastICA")
 importFrom(parallel,"detectCores")
 importFrom(pheatmap,"pheatmap")
+importFrom(fgsea,"fgsea")
+
