@@ -1,6 +1,3 @@
-#' Function to test enrichment of biological terms on each estimated component (matrix T).
-
-
 # function to reorient the components if ICA-based deconvolution algorithm was performed
 .orient_funct <- function(S) {
   orient <-
@@ -40,6 +37,26 @@
   }
 }
 
+#' Function to perform biological enrichment analysis.
+#'
+#' This function perform biological enrichment analysis for the different component of the T matrix
+#'
+#' @param mydata T matrix.
+#' @param pathways List of gene sets to check
+#' @param showCategory Maximum of enriched terms to display
+#' @param showLeadingGenes Display or not leading genes for each significant term
+#' @param fdr Whether correction for multiple testing should be considered
+#' @param multilevel Whether fgseamult should be used
+#' @param ICAbased If ICA based deconvolution algorithm was used to obtain the T matrix.
+#'
+#' @return return a list with :
+#' enrichment results for each column (cell type) of the T matrix.
+#'
+#'
+#' @export
+#'
+#'
+#'
 enrich = function(mydata, pathways = NULL, showCategory = 10, showLeadingGenes = FALSE, fdr = TRUE, multilevel = FALSE, ICAbased = FALSE){
   if(ICAbased == TRUE){
     mydata = .orient_funct(mydata)

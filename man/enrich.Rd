@@ -2,9 +2,17 @@
 % Please edit documentation in R/res_enrich.R
 \name{enrich}
 \alias{enrich}
-\title{Function to perform biological enrichment analysis}
+\title{Function to perform biological enrichment analysis.}
 \usage{
-enrich(mydata, pathways = NULL, showCategory = 10, showLeadingGenes = FALSE, fdr = TRUE, multilevel = FALSE, ICAbased = FALSE)
+enrich(
+  mydata,
+  pathways = NULL,
+  showCategory = 10,
+  showLeadingGenes = FALSE,
+  fdr = TRUE,
+  multilevel = FALSE,
+  ICAbased = FALSE
+)
 }
 \arguments{
 \item{mydata}{T matrix.}
@@ -22,8 +30,9 @@ enrich(mydata, pathways = NULL, showCategory = 10, showLeadingGenes = FALSE, fdr
 \item{ICAbased}{If ICA based deconvolution algorithm was used to obtain the T matrix.}
 }
 \value{
-This function perform biological enrichment analysis for the different component of the T matrix.
+return a list with :
+enrichment results for each column (cell type) of the T matrix.
 }
 \description{
-This function perform biological enrichment analysis for the different component of the T matrix.
+This function perform biological enrichment analysis for the different component of the T matrix
 }
