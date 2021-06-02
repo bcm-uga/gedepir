@@ -20,7 +20,7 @@
 .enrichfun = function(pathways, genescores, showCategory = 10, showLeadingGenes = FALSE, fdr = TRUE, multilevel = FALSE){
     genes=sort(genescores,decreasing=TRUE)
     if(multilevel == FALSE){
-        fgseaRes = data.frame(fgsea(pathways, genes, minSize=2, maxSize=200))
+        fgseaRes = data.frame(fgsea(pathways, genes, minSize=2, maxSize=200,nperm=2e4))
     } else if(multilevel == TRUE){
         fgseaRes = data.frame(fgseaMultilevel(pathways, genes, minSize=2, maxSize=200, eps=0))
     }
@@ -44,6 +44,6 @@ enrich = function(mydata, pathways = NULL, showCategory = 10, showLeadingGenes =
     if(ICAbased == TRUE){
         mydata = .orient_funct(mydata)
     }
-    apply(mydata, 2, function(x){.enrichfun(pathways = pathways, genescores = x, showCategory = showCategory, showLeadingGenes = showLeadingGenes, fdr = fdr, multilevel = multilevel)})
+  apply(mydata, 2, function(x){.enrichfun(pathways = pathways, genescores = x, showCategory = showCategory, showLeadingGenes = showLeadingGenes, fdr = fdr, multilevel = multilevel)})
 }
 
