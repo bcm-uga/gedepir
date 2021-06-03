@@ -37,7 +37,7 @@
       ))
     }
   } else if (multilevel == TRUE) {
-    if ("eps" %in% names(formals(fgsea::fgseaMultilevel()))) {
+    if ("eps" %in% names(formals(fgsea::fgseaMultilevel))) {
       fgseaRes <- data.frame(fgseaMultilevel(
         pathways,
         genes,
@@ -61,7 +61,7 @@
   res <- res[order(res[, pv], decreasing = FALSE), ]
   respos <- res[res[, "ES"] > 0, ]
   if (nrow(respos) == 0) {
-    p <- print("No significant cell-type enrichment")
+    return(NULL) #p <- print("No significant cell-type enrichment")
   } else {
     respos <- respos[1:min(showCategory, nrow(respos)), ]
     resf <- respos
