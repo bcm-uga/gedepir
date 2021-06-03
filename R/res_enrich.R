@@ -37,7 +37,7 @@
       ))
     }
   } else if (multilevel == TRUE) {
-    if ("eps" %in% names(formal(fgsea::fgseaMultilevel()))) {
+    if ("eps" %in% names(formals(fgsea::fgseaMultilevel()))) {
       fgseaRes <- data.frame(fgseaMultilevel(
         pathways,
         genes,
