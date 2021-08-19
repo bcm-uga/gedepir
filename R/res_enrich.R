@@ -112,3 +112,36 @@ enrich <- function(mydata,
     }
   )
 }
+
+
+
+read_raw_db= function(file, DB=NULL){
+  
+  x <- scan(file, 
+            what = "", sep = "\n")
+  y <- strsplit(x, "\t+")
+  names(y) <- paste(basename(file), sapply(y, `[[`, 1), sep = ".")
+  y <- lapply(y, `[`, -1)
+  DB = c(DB, y)
+  DB <- lapply(DB, function(z) sort(unique(setdiff(z, c(NA, 
+                                                        "", "---")))))
+  DB <- DB[unique(names(DB))]
+}
+
+read_gmt_db= function(file, DB=NULL){
+  
+  geneSetDB = readLines(file)
+  geneSetDB = strsplit(geneSetDB, "\t")
+  names(geneSetDB) = sapply(geneSetDB, "[", 1)
+  geneSetDB = lapply(geneSetDB, "[", -1:-2)
+  geneSetDB = lapply(geneSetDB, function(x) {
+    x[which(x != "")]
+  })
+  y <- geneSetDB
+  names(y) <- paste0(basename(file), ".", names(y))
+  DB = c(DB, y)
+  DB <- lapply(DB, function(z) sort(unique(setdiff(z, c(NA, 
+                                                        "", "---")))))
+  DB <- DB[unique(names(DB))]
+  
+}

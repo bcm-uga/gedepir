@@ -193,7 +193,7 @@ prepare_A <- function(A_r, A_est, T_ref) {
 
   ## remove rows at 0
   idx_to_keep <- which(rowSums(A_est) > 0)
-  A_est <- A_est[idx_to_keep, ]
+  A_est <- matrix(A_est[idx_to_keep, ], ncol=ncol(A_est))
 
 
   ## if not supplying enough types (make sure that {nrow(A_est) >= K})
@@ -210,18 +210,33 @@ prepare_A <- function(A_r, A_est, T_ref) {
 
   if (nrow(x = A_est) > K) {
     print("Number of cell type exceded K, filtering and clustering are applies")
-    filteredout <- rowMeans(A_est) > 3e-2
+    A_keep=1:nrow(A_est)
+    unchar=NULL
+    # handle the case in which an uncharacterized cell type is estimated 
+    # by a reference based method !! last row in A_est is the uncharacterized cell type !!
+    if (nrow(A_est) - ncol(T_est) > 0) { 
+      T_keep <- setdiff(which(filteredout), nrow(A_est))
+      A_keep=1:(nrow(A_est)-1)
+      print("keeping uncharatectized cell type in any case")
+      unchar=nrow(A_est)
+    }
+    filteredout <- rowMeans(A_est[A_keep,]) > 1/(2*K) ## is actually filterOK
     print(which(!filteredout))
-    tokeep <- setdiff(which(filteredout), nrow(A_est))
+   
+   
 
     ### Case 1 : Nb of filtered component are lower that K -> we add positive random values closed to 0 for missing rows
-    if (sum(filteredout) < K) {
-      A_est <- A_est[order(rowSums(A_est), decreasing = TRUE)[1:K], ]
+    if (sum(filteredout) < K-1) {
+      
+      A_est <- A_est[c(order(rowSums(A_est[A_keep,])
+                             , decreasing = TRUE)[1:K-1],
+                       unchar), ]
+      
       print("Number of cell type exceded K, only the K most contributing cell types were kept for scoring.")
     }
 
     ### Case 2 : Nb of filtered component are equel to K
-    if (sum(filteredout) == K) {
+    if (sum(filteredout) == K -1) {
       print("Nb of kept component is equal K")
       A_est <- A_est[filteredout, ]
     }
@@ -229,17 +244,20 @@ prepare_A <- function(A_r, A_est, T_ref) {
     ### Case 3 : Nb of filtered component are greater than K -> we apply hierarchical clustering to aggregate similar components based of the reference profiles (T matrix)
     if (sum(filteredout) > K) {
       print("Nb of kept component greater than equal K, we apply a clustering step")
-      T_ref <- apply(T_ref, 2, as.numeric)
+      T_est <- apply(T_est, 2, as.numeric)
       nb_clust <- nrow(A_r)
-      tokeep <- setdiff(which(filteredout), nrow(A_est))
+      tokeep <- which(filteredout)
       unchar <- NULL
-      if (nrow(A_est) - ncol(T_ref) > 0) {
+      # handle the case in which an uncharacterized cell type is estimated 
+      # by a reference based method !! last row in A_est is the uncharacterized cell type !!
+      if (nrow(A_est) - ncol(T_est) > 0) { 
+        tokeep <- setdiff(which(filteredout),  nrow(A_est))
         unchar <- sum(filteredout)
-      } # handle the case in which an uncharacterized cell type is estimated by a reference based method
+      }
       A_est <- merge_hc(
-        A = A_est[filteredout, ],
+        A = A_est[tokeep, ],
         k = nb_clust,
-        T = T_ref[, tokeep],
+        T = T_est[, tokeep],
         unknown_est = unchar
       )
     }
