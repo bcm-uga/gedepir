@@ -22,7 +22,7 @@ We provide access to a matrix of Gene Expression values `D` from a pseudobulk, t
 Details regarding the genertaion  
 
 ```{r datas}
-D = readRDS(url(""))
+D = readRDS(url("https://figshare.com/ndownloader/files/30587814"))
 dim(D)
 head(D)[1:5, 1:5]
 
@@ -35,7 +35,8 @@ In addition to cell-type composition, Gene Expression values can vary because of
 
   
 ```{r run_norm}
- 
+library(gedepir)
+ D_norm=run_norm(mix_matrix = D,method = "RPM")
 ```
 
 ## Step 2: transforming data 
@@ -44,7 +45,7 @@ We provide the function `run_trans`, which performs a transformation of the data
 
  
 ```{r run_trans}
- 
+ D_trans= run_trans(mix_matrix = D_norm,method = "log2")
 ```
 
 
@@ -54,7 +55,7 @@ The function `run_featsel` select vataiables (genes) with the largest Coefficien
 We propose to select 5000 genes ("cv5000") or 1000 genes ("cv1000"). By removing genes that carry little or no information, deconvolution routines run much faster.
 
 ```{r run_featsel}
- 
+ D_fsel= run_featsel(mix_matrix = D_trans,method = "cv1000")
 ```
 
 ## Step 4: running deconvolution methods
@@ -65,14 +66,47 @@ To select the number of principal components, we use Cattell rule that recommend
 
 Here we show the results obtained with `NMF`.
 ```{r deconv}
-results_RFE = medepir::RFE(D_FS, nbcell = 5)
+results_NMF = run_deconv(mix_matrix = D_fsel,k= 9, method = "NMF")
 ```
 
 
 
 ## Step 5: Enrichment analysis.
+`gedepir` includes a wrapper for `fgsea` to analyze  the estimated cell type profiles.
+
+We included several databases available for enrichment analysis :
+
+  + 'Tissue.markers.RDS'
+  + 'Cancer.markers.RDS'
+  + 'Tissue.CellTypes.markers.RDS'
+  + 'Cancer_CellMatch.RDS'
+  + 'Cancer_Cell_Lines.RDS'
+  + 'GTEx.RDS'
+  + 'Reactome_2016.RDS'
+  + 'GO.DB.RDS'
+  + 'KEGG_2019_Human.RDS'
+  + 'markerscelltypes.RDS'
+  + 'CellMatchCurated.RDS'
+
 
 ```{r enrich}
+```
 
+
+```{r enrich}
+library(fgsea)
+database= readRDS(system.file("data", "Tissue.CellTypes.markers.RDS", package = "gedepir"))
+gedepir::enrich(results_NMF$T_matrix,pathways = database,ICAbased = FALSE, fdr = FALSE)
+```
+
+## Step 6: Build your pipeline
+**gedepir** simplifies the definition of a end-to-end analysis pipeline with a set of base functions that are connected through the *pipes* syntax ' %>% ' used in **magrittr**,   **tidyr** or   **dplyr**  packages.
+```{r pipeline}
+library(magrittr)
+results_ICA= D %>%
+  run_norm(method = "RPM") %>%
+  run_trans(method = "linear") %>%
+  run_deconv(method = "ICA")
+gedepir::enrich(results_ICA$T_matrix,database,ICAbased = TRUE)
 ```
 
