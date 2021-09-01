@@ -1,11 +1,11 @@
 ---
-title: "Estimating cell-type composition using Gene Expression data "
+title: "Estimating cell-type composition using Gene Expression data"
 author: "S Karkar, M Richard, Y Blum"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 keep_md: true
 vignette: >
-  %\VignetteIndexEntry{Deconvolution}
+  %\VignetteIndexEntry{Estimating cell-type composition using Gene Expression data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,8 +18,8 @@ Based on Gene Expression values, the vignette shows how to estimate cell-type co
 
 ## Data
 
-We provide access to a matrix of Gene Expression values `D` from a pseudobulk, that is, a simulation of complex tissue comprised of $k=9$ cell types.
-Details regarding the genertaion  
+We provide access to a matrix of Gene Expression values `D` from a pseudo-bulk, that is, a simulation of complex tissue comprised of $k=9$ cell types.
+
 
 ```{r datas}
 D = readRDS(url("https://figshare.com/ndownloader/files/30587814"))
@@ -31,7 +31,7 @@ head(D)[1:5, 1:5]
 
 ## Step 1: Normalising data
 
-In addition to cell-type composition, Gene Expression values can vary because of other technical variables, such as batch effects and, for RNA-Seq, read depth. and We use the function `run_norm` to account for this effect. By default, the function assumes that the normalizing method is 'RPM', In addition we provide access to 3 other methods "TPM", "DESeq2" (and its in-house rewriting : "MR" that do do required the `DESeq2` package), and "edgeR". Note that "TPM" requires the gene length (in bp) in form of a vector of appropriate length.   
+In addition to cell-type composition, Gene Expression values can vary because of other technical variables, such as batch effects and, for RNA-Seq, read depth. and We use the function `run_norm` to account for this effect. By default, the function assumes that the normalizing method is "RPM", In addition we provide access to 3 other methods "TPM", "DESeq2" (and its in-house rewriting : "MR" that do do required the **DESeq2** package), and "edgeR". Note that "TPM" requires the gene length (in bp) in form of a vector of appropriate length.   
 
   
 ```{r run_norm}
@@ -60,9 +60,9 @@ We propose to select 5000 genes ("cv5000") or 1000 genes ("cv1000"). By removing
 
 ## Step 4: running deconvolution methods
 
-By default, we propose 2 methods of deconvolution : `NMF` to run `NMF::snmf`, `ICA` to run `deconica` package. Additionally, when available on the system, `CDSeq` and `PREDE` can be used. 
+By default, we propose 2 methods of deconvolution : "NMF" to run `NMF::snmf`, "ICA" from the *deconica* package. Additionally, when available on the system, "CDSeq" and "PREDE" methods can be used. 
 
-To select the number of principal components, we use Cattell rule that recommends to keep principal components to the left of the elbow in the eigenvalue plot. In practice Cattell rule suggests to keep the number of principal components at the observed elbow plus one.
+To select the number of cell types, Cattell rule uses PCA analysis and recommends to keep principal components to the left of the elbow in the eigenvalue plot. In practice Cattell rule suggests to keep the number of principal components at the observed elbow plus one.
 
 Here we show the results obtained with `NMF`.
 ```{r deconv}
@@ -74,7 +74,8 @@ results_NMF = run_deconv(mix_matrix = D_fsel,k= 9, method = "NMF")
 ## Step 5: Enrichment analysis.
 `gedepir` includes a wrapper for `fgsea` to analyze  the estimated cell type profiles.
 
-We included several databases available for enrichment analysis :
+We provide several databases available for enrichment analysis available at :
+[[https://figshare.com/articles/dataset/Database_for_enrichment_analysis/16546470]]
 
   + 'Tissue.markers.RDS'
   + 'Cancer.markers.RDS'
@@ -95,12 +96,12 @@ We included several databases available for enrichment analysis :
 
 ```{r enrich}
 library(fgsea)
-database= readRDS(system.file("data", "Tissue.CellTypes.markers.RDS", package = "gedepir"))
+database= readRDS(url("https://figshare.com/ndownloader/files/30593259"))
 gedepir::enrich(results_NMF$T_matrix,pathways = database,ICAbased = FALSE, fdr = FALSE)
 ```
 
 ## Step 6: Build your pipeline
-**gedepir** simplifies the definition of a end-to-end analysis pipeline with a set of base functions that are connected through the *pipes* syntax ' %>% ' used in **magrittr**,   **tidyr** or   **dplyr**  packages.
+**gedepir** simplifies the definition of a end-to-end analysis pipeline with a set of base functions that are connected through the *pipes* syntax `  %>% `  used in **magrittr**,   **tidyr** or   **dplyr**  packages.
 ```{r pipeline}
 library(magrittr)
 results_ICA= D %>%
