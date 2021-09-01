@@ -181,7 +181,7 @@ homgeneized_cor_mat <- function(A_r, A_est) {
 #' @return
 #' @export
 #'
-prepare_A <- function(A_r, A_est, T_ref) {
+prepare_A <- function(A_r, A_est, T_est) {
   N <- ncol(x = A_r)
   K <- nrow(x = A_r)
   stopifnot(K > 1)
