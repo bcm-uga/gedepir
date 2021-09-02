@@ -79,7 +79,7 @@ score_res <- function(res = res_, ref = ref_, pipe = TRUE) {
   sc <- scoring_function(
     Aest = res$A_matrix,
     Aref = ref$A_matrix,
-    Tref = ref$T_matrix
+    Test = res$T_matrix
   )
   if (pipe) {
     print(sc)
@@ -344,14 +344,14 @@ eval_MAE <- function(A_r, Aest_p) {
 #'
 #' @param Aref
 #' @param Aest
-#' @param Tref
+#' @param Test
 #'
 #' @return
 #' @export
 #'
-scoring_function <- function(Aref, Aest, Tref) {
+scoring_function <- function(Aref, Aest, Test) {
   #  pretreatment of estimated A
-  Aest_p <- prepare_A(A_r = Aref, A_est = Aest, T_ref = Tref)
+  Aest_p <- prepare_A(A_r = Aref, A_est = Aest, T_est =  Test)
   #  scoring
   mae <- eval_MAE(Aref, Aest_p)
   cr <- correlation_row(Aref, Aest_p)
