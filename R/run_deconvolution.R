@@ -22,7 +22,7 @@
 #' @importFrom NMF "nmf"
 #' @importFrom fastICA "fastICA"
 #' @importFrom parallel "detectCores"
-#'
+#' @importFrom MASS "ginv"
 #' @export
 #'
 run_deconv <-
@@ -62,7 +62,7 @@ run_deconv <-
       #T_matrix <- res@fit@W
       remove(list = "res")
       row.names(A_matrix) <- paste("NC", 1:k, sep = "")
-      T_matrix=data.matrix(Dfs) %*% MASS::ginv(data.matrix(A))
+      T_matrix=data.matrix(mix_matrix) %*% MASS::ginv(data.matrix(A))
       T_matrix[T_matrix<0]=0
     }
 

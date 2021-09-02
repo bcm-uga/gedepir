@@ -5,9 +5,10 @@ Package {gedepir} (Gene Expression DEconvoluation PIpeline in R) provides practi
 
 ## Installation
 
-To get the current version from GitHub:
+To install dependencies and get the current version from GitHub:
 
 ```R
+BiocManager::install(c("NMF","fgsea"))
 remotes::install_github("bcm-uga/gedepir")
 ```
 

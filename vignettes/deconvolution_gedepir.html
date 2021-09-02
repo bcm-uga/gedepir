@@ -215,7 +215,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 
 ## [[4]]
 ##                         pathway      padj       pval        ES
-## 7 Kidney.Normal_cell.Neutrophil 0.2067198 0.02583997 0.9704661
+## 7 Kidney.Normal_cell.Neutrophil 0.3259838 0.04074798 0.9544087
 ## 
 ## [[5]]
 ## NULL
@@ -224,17 +224,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## NULL
 ## 
 ## [[7]]
-##                                            pathway      padj       pval
-## 4 Small_intestine.Normal_cell.Enteroendocrine_cell 0.3848139 0.04810173
-##         ES
-## 4 0.897439
+## NULL
 ## 
 ## [[8]]
 ## NULL
 ## 
 ## [[9]]
-##                                    pathway      padj       pval       ES
-## 8 Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1751599 0.02189498 0.893681</code></pre>
+##                                    pathway      padj       pval        ES
+## 8 Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1464789 0.01830986 0.9107322</code></pre>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fgsea)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>database<span class="ot">=</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">&quot;https://figshare.com/ndownloader/files/30593259&quot;</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>gedepir<span class="sc">::</span><span class="fu">enrich</span>(results_NMF<span class="sc">$</span>T_matrix,<span class="at">pathways =</span> database,<span class="at">ICAbased =</span> <span class="cn">FALSE</span>, <span class="at">fdr =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
@@ -249,7 +246,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 
 ## [[4]]
 ##                         pathway      padj       pval        ES
-## 7 Kidney.Normal_cell.Neutrophil 0.1835735 0.02294669 0.9704661
+## 7 Kidney.Normal_cell.Neutrophil 0.2987158 0.03733948 0.9544087
 ## 
 ## [[5]]
 ## NULL
@@ -264,8 +261,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## NULL
 ## 
 ## [[9]]
-##                                    pathway      padj       pval       ES
-## 8 Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1579763 0.01974703 0.893681</code></pre>
+##                                    pathway      padj       pval        ES
+## 8 Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1353173 0.01691466 0.9107322</code></pre>
 </div>
 <div id="step-6-build-your-pipeline" class="section level2">
 <h2>Step 6: Build your pipeline</h2>
@@ -277,62 +274,71 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_deconv</span>(<span class="at">method =</span> <span class="st">&quot;ICA&quot;</span>)</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>gedepir<span class="sc">::</span><span class="fu">enrich</span>(results_ICA<span class="sc">$</span>T_matrix,database,<span class="at">ICAbased =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>## [[1]]
-##                                                      pathway       padj
-## 15                    Undefined.Cancer_cell.Cancer_stem_cell 0.01200163
-## 361                   Undefined.Cancer_cell.Cancer_stem_cell 0.01200163
-## 151                    Breast.Normal_cell.Myoepithelial_cell 0.01456408
-## 451      Embryonic_prefrontal_cortex.Normal_cell.Interneuron 0.02095944
-## 159 Sclerocorneal_tissue.Normal_cell.Limbal_mesenchymal_cell 0.02323603
-## 357                       Brain.Cancer_cell.Cancer_stem_cell 0.02951815
-## 551                Embryo.Normal_cell.Morula_cell_Blastomere 0.03296567
-## 190                      Breast.Cancer_cell.Cancer_stem_cell 0.03397485
-## 177  Peripheral_blood.Cancer_cell.Circulating_stem_like_cell 0.03561909
-## 362                       Liver.Cancer_cell.Cancer_stem_cell 0.03762992
-##             pval        ES
-## 15  0.0005509642 0.9977722
-## 361 0.0005509642 0.9977722
-## 151 0.0018732782 0.9933920
-## 451 0.0031135404 0.8850218
-## 159 0.0035780115 0.9761069
-## 357 0.0051870654 0.9781593
-## 551 0.0060914830 0.7448607
-## 190 0.0064010595 0.9741632
-## 177 0.0071625344 0.9832007
-## 362 0.0080440771 0.9822348
-## 
-## [[2]]
 ## NULL
 ## 
+## [[2]]
+##                                                   pathway       padj
+## 500 Large_intestine.Normal_cell.DCLK1plus_progenitor_cell 0.04768075
+##             pval       ES
+## 500 8.637816e-05 0.963137
+## 
 ## [[3]]
-##                                                          pathway       padj
-## 282                                Blood.Cancer_cell.Cancer_cell 0.02021978
-## 289                           Ovary.Normal_cell.Endothelial_cell 0.02021978
-## 463                            Ovary.Cancer_cell.Epithelial_cell 0.02021978
-## 280 Hair_follicle.Normal_cell.Epithelial_hair_follicle_stem_cell 0.02277980
-## 46                            Thymus.Normal_cell.Epithelial_cell 0.02528399
-## 483                              Lung.Normal_cell.Secretory_cell 0.02811575
-## 240                            Liver.Cancer_cell.Liver_stem_cell 0.03059849
-## 281                                Blood.Cancer_cell.Cancer_cell 0.03059849
-## 326                      Bone_marrow.Normal_cell.Langerhans_cell 0.03059849
-## 276                        Undefined.Normal_cell.Epithelial_cell 0.03305191
-##             pval        ES
-## 282 0.0000974374 0.9915591
-## 289 0.0001825151 0.9684373
-## 463 0.0001825151 0.9684373
-## 280 0.0006602839 0.9909464
-## 46  0.0011541286 0.9811588
-## 483 0.0014619061 0.7665491
-## 240 0.0029378989 0.9661638
-## 281 0.0028612303 0.9804395
-## 326 0.0029378989 0.9649887
-## 276 0.0034129693 0.9903256
+##                                               pathway       padj         pval
+## 486                   Lung.Normal_cell.FOXN4plus_cell 0.02514119 0.0005216786
+## 4   Chorionic_villus.Normal_cell.Villous_stromal_cell 0.04913960 0.0037673130
+## 448        Embryo.Normal_cell.Primitive_endoderm_cell 0.04913960 0.0026603272
+##            ES
+## 486 0.7743916
+## 4   0.9876944
+## 448 0.7197438
 ## 
 ## [[4]]
-##                             pathway       padj         pval        ES
-## 486 Lung.Normal_cell.FOXN4plus_cell 0.03396714 0.0002906639 0.7744033
+##                                                      pathway       padj
+## 15                    Undefined.Cancer_cell.Cancer_stem_cell 0.01681666
+## 361                   Undefined.Cancer_cell.Cancer_stem_cell 0.01681666
+## 151                    Breast.Normal_cell.Myoepithelial_cell 0.01725855
+## 451      Embryonic_prefrontal_cortex.Normal_cell.Interneuron 0.01938336
+## 159 Sclerocorneal_tissue.Normal_cell.Limbal_mesenchymal_cell 0.02263805
+## 357                       Brain.Cancer_cell.Cancer_stem_cell 0.03167559
+## 551                Embryo.Normal_cell.Morula_cell_Blastomere 0.03359531
+## 190                      Breast.Cancer_cell.Cancer_stem_cell 0.03754822
+## 389                   Undefined.Cancer_cell.Cancer_stem_cell 0.03754822
+## 177  Peripheral_blood.Cancer_cell.Circulating_stem_like_cell 0.04158989
+##             pval        ES
+## 15  0.0003318951 0.9978099
+## 361 0.0003318951 0.9978099
+## 151 0.0014382122 0.9933920
+## 451 0.0027677830 0.8848293
+## 159 0.0035679533 0.9761107
+## 357 0.0057117750 0.9782571
+## 551 0.0061469684 0.7451756
+## 190 0.0076889279 0.9742810
+## 389 0.0077448283 0.9499071
+## 177 0.0087399049 0.9832076
 ## 
 ## [[5]]
-## NULL</code></pre>
+##                                                          pathway       padj
+## 282                                Blood.Cancer_cell.Cancer_cell 0.01287073
+## 289                           Ovary.Normal_cell.Endothelial_cell 0.01370959
+## 463                            Ovary.Cancer_cell.Epithelial_cell 0.01370959
+## 280 Hair_follicle.Normal_cell.Epithelial_hair_follicle_stem_cell 0.01460157
+## 46                            Thymus.Normal_cell.Epithelial_cell 0.01638093
+## 483                              Lung.Normal_cell.Secretory_cell 0.01654460
+## 240                            Liver.Cancer_cell.Liver_stem_cell 0.02298157
+## 326                      Bone_marrow.Normal_cell.Langerhans_cell 0.02437086
+## 276                        Undefined.Normal_cell.Epithelial_cell 0.02494178
+## 281                                Blood.Cancer_cell.Cancer_cell 0.02494178
+##             pval        ES
+## 282 9.681479e-05 0.9915625
+## 289 4.574984e-04 0.9684360
+## 463 4.574984e-04 0.9684360
+## 280 6.487188e-04 0.9909539
+## 46  1.259975e-03 0.9811640
+## 483 1.408689e-03 0.7664802
+## 240 2.414730e-03 0.9661776
+## 326 2.817185e-03 0.9650088
+## 276 3.017241e-03 0.9903225
+## 281 3.027354e-03 0.9804395</code></pre>
 </div>
 
 
