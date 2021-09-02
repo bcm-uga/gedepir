@@ -59,9 +59,11 @@ run_deconv <-
       )
       colnames(A)=colnames(mix_matrix)
       A_matrix <- A
-      T_matrix <- res@fit@W
+      #T_matrix <- res@fit@W
       remove(list = "res")
       row.names(A_matrix) <- paste("NC", 1:k, sep = "")
+      T_matrix=data.matrix(Dfs) %*% MASS::ginv(data.matrix(A))
+      T_matrix[T_matrix<0]=0
     }
 
     if (method == "ICA") {
