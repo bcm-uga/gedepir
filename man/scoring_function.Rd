@@ -4,10 +4,10 @@
 \alias{scoring_function}
 \title{Title}
 \usage{
-scoring_function(Aref, Aest, Tref)
+scoring_function(Aref, Aest, Test)
 }
 \arguments{
-\item{Tref}{}
+\item{Test}{}
 }
 \value{
 

@@ -4,7 +4,7 @@
 \alias{prepare_A}
 \title{Title}
 \usage{
-prepare_A(A_r, A_est, T_ref)
+prepare_A(A_r, A_est, T_est)
 }
 \arguments{
 \item{T_ref}{}
