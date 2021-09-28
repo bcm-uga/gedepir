@@ -1,7 +1,7 @@
 Package: gedepir
 Type: Package
 Title: Gene Expression DEconvoluation PIpeline in R
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Slim", "Karkar", role = "aut",
            email = "slim.karkar@univ-grenoble-alpes.fr"),
@@ -19,6 +19,7 @@ Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 Depends: R (>= 3.3)
 Imports: 
+    MASS,
     NMF,
     fastICA,
     pheatmap,
