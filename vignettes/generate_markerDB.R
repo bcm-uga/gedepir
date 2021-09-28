@@ -1,35 +1,7 @@
----
-title: "Generate_markerDB"
-author: "Yuna Blum"
-date: "`r Sys.Date()`"
-output:  rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Generate_markerDB}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
-```
 
-## Literature marker databases
-
-Two different literature marker databases were downloaded: 
-
-* CellMarker  (Zhang et al., 2019, DOI: 10.1093/nar/gky900).  
-Link to dowload the database: http://bio-bigdata.hrbmu.edu.cn/CellMarker/download.jsp
-We choose the human restricted marker file: Human_cell_markers.txt  
-
-
-
-* CEllmatch (Shao et al, iScience 2020, https://doi.org/10.1016/j.isci.2020.100882), which is included in the scCATCH tool.  
-Link to download the database: https://github.com/ZJUFanLab/scCATCH/tree/master/R  
-"CellMatch reference database was derived from various resources, such as CellMarker (Zhang et al., 2019b), MCA (Han et al., 2018), CancerSEA (Yuan et al., 2019), and the CD Marker Handbook."
-
-
-```{r download}
+## ----download-----------------------------------------------------------------
 #CellMarker
 cellmarker = read.table(url("http://biocc.hrbmu.edu.cn/CellMarker/download/Human_cell_markers.txt"), header=TRUE, sep="\t")
 
@@ -40,17 +12,8 @@ load(sysdata_cellmatch)
 ls()
 cellmatch = CellMatch
 unlink(sysdata_cellmatch)
-```
 
-## Filters on the databases
-
-Some filters are applied on the databases:
-* Restrict markers to human markers if several species are included.
-* Restrict to available gene symbols.
-* Set a minimal number of genes per cell population 
-* Set a maximum number of genes per cell population 
-
-```{r filter cellmarker}
+## ----filter cellmarker--------------------------------------------------------
 
 ### Filtering the cellmarker object
 
@@ -75,9 +38,8 @@ liter_cellmarker_filter = liter_cellmarker[which(nbgenes>=3 & nbgenes<=200)]
 length(liter_cellmarker_filter)
 liter_cellmarker_filter[1:3]
 
-```
 
-```{r filter cellmatch}
+## ----filter cellmatch---------------------------------------------------------
 
 ### Filtering the cellmarker object
 
@@ -99,17 +61,10 @@ liter_cellmatch_filter = liter_cellmatch[which(nbgenes>=3 & nbgenes<=200)]
 length(liter_cellmatch_filter)
 liter_cellmatch_filter[1:3]
 
-```
-## Saving databases
 
-```{r save, eval=FALSE}
-saveRDS(liter_cellmarker_filter, "cellmarkerDB.RDS")
-
-saveRDS(liter_cellmatch_filter, "cellmatchDB.RDS")
-
-```
-
-Note (i) that the last code is not running when running the vignette. 
-Note (ii) that the marker DB objects are in the list format as it is required in the fgsea function from the R package fgsea.
-
+## ----save, eval=FALSE---------------------------------------------------------
+#  saveRDS(liter_cellmarker_filter, "cellmarkerDB.RDS")
+#  
+#  saveRDS(liter_cellmatch_filter, "cellmatchDB.RDS")
+#  
 

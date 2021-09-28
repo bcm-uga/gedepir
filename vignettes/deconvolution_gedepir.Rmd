@@ -8,8 +8,10 @@ output:
     df_print: paged
   pdf_document: default
 keep_md: yes
-vignette: |
-  %\VignetteIndexEntry{Estimating cell-type composition using Gene Expression data} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+vignette: >
+  %\VignetteIndexEntry{Estimating cell-type composition using Gene Expression data}
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

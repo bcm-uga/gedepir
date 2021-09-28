@@ -12,7 +12,7 @@
 
 <meta name="author" content="S Karkar, M Richard, Y Blum" />
 
-<meta name="date" content="2021-09-02" />
+<meta name="date" content="2021-09-28" />
 
 <title>Estimating cell-type composition using Gene Expression data</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Estimating cell-type composition using Gene Expression data</h1>
 <h4 class="author">S Karkar, M Richard, Y Blum</h4>
-<h4 class="date">2021-09-02</h4>
+<h4 class="date">2021-09-28</h4>
 
 
 
@@ -160,46 +160,93 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## MIR6859-2 1.000000  1.000000000 3.000000000 0.000000 1.000000
 ## MIR6859-1 0.000000  0.000000000 0.000000000 0.000000 0.000000</code></pre>
 </div>
-<div id="step-1-normalising-data" class="section level2">
-<h2>Step 1: Normalising data</h2>
-<p>In addition to cell-type composition, Gene Expression values can vary because of other technical variables, such as batch effects and, for RNA-Seq, read depth. and We use the function <code>run_norm</code> to account for this effect. By default, the function assumes that the normalizing method is “RPM”, In addition we provide access to 3 other methods “TPM”, “DESeq2” (and its in-house rewriting : “MR” that do do required the <strong>DESeq2</strong> package), and “edgeR”. Note that “TPM” requires the gene length (in bp) in form of a vector of appropriate length.</p>
+<div id="step-1-normalizing-data" class="section level2">
+<h2>Step 1: Normalizing data</h2>
+<p>In addition to cell-type composition, Gene Expression values can vary because of other technical variables, such as, for RNA-Seq, read depth. We use the function <code>run_norm</code> to account for this effect. By default, the function assumes that the normalizing method is “RPM”, In addition we provide access to 3 other methods “TPM”, “DESeq2” (and its in-house rewriting : “MR” that do do required the <strong>DESeq2</strong> package), and “edgeR”. Note that “TPM” requires the gene length (in bp) in form of a vector of appropriate length.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gedepir)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> D_norm<span class="ot">=</span><span class="fu">run_norm</span>(<span class="at">mix_matrix =</span> D,<span class="at">method =</span> <span class="st">&quot;RPM&quot;</span>)</span></code></pre></div>
 </div>
 <div id="step-2-transforming-data" class="section level2">
-<h2>Step 2: transforming data</h2>
+<h2>Step 2: Transforming data</h2>
 <p>We provide the function <code>run_trans</code>, which performs a transformation of the data. By default, the transformation method is “linear”, which simply return the input data. Additionally, we provide 2 transformations : “log2” and “pseudolog”. “log2” transformation apply the mathematical function <span class="math inline">\(f(x)=log2(x+1)\)</span> where <span class="math inline">\(x\)</span> is the input data, and “pseudolog” corresponds to the function <span class="math inline">\(f(x)=asinh(x)\)</span></p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a> D_trans<span class="ot">=</span> <span class="fu">run_trans</span>(<span class="at">mix_matrix =</span> D_norm,<span class="at">method =</span> <span class="st">&quot;log2&quot;</span>)</span></code></pre></div>
 </div>
 <div id="step-3-feature-selection" class="section level2">
-<h2>Step 3: feature selection</h2>
+<h2>Step 3: Feature selection</h2>
 <p>The function <code>run_featsel</code> select vataiables (genes) with the largest Coefficient of Variation. We propose to select 5000 genes (“cv5000”) or 1000 genes (“cv1000”). By removing genes that carry little or no information, deconvolution routines run much faster.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a> D_fsel<span class="ot">=</span> <span class="fu">run_featsel</span>(<span class="at">mix_matrix =</span> D_trans,<span class="at">method =</span> <span class="st">&quot;cv1000&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a> D_fsel<span class="ot">=</span> <span class="fu">run_featsel</span>(<span class="at">mix_matrix =</span> D_trans, <span class="at">method =</span> <span class="st">&quot;cv1000&quot;</span>)</span></code></pre></div>
 </div>
 <div id="step-4-running-deconvolution-methods" class="section level2">
-<h2>Step 4: running deconvolution methods</h2>
-<p>By default, we propose 2 methods of deconvolution : “NMF” to run <code>NMF::snmf</code>, “ICA” from the <em>deconica</em> package. Additionally, when available on the system, “CDSeq” and “PREDE” methods can be used.</p>
-<p>To select the number of cell types, Cattell rule uses PCA analysis and recommends to keep principal components to the left of the elbow in the eigenvalue plot. In practice Cattell rule suggests to keep the number of principal components at the observed elbow plus one.</p>
+<h2>Step 4: Running deconvolution methods</h2>
+<p>By default, we propose 2 methods of deconvolution: “NMF” to run <code>NMF::snmf</code>, “ICA” from the <em>deconica</em> package. Additionally, when available on the system, “CDSeq” and “PREDE” methods can be used.</p>
+<p>To select the number of cell types, Cattell’s rule uses PCA analysis and recommends to keep principal components to the left of the elbow in the eigenvalue plot. In practice Cattell rule suggests to keep the number of principal components at the observed elbow plus one.</p>
 <p>Here we show the results obtained with <code>NMF</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>results_NMF <span class="ot">=</span> <span class="fu">run_deconv</span>(<span class="at">mix_matrix =</span> D_fsel,<span class="at">k=</span> <span class="dv">9</span>, <span class="at">method =</span> <span class="st">&quot;NMF&quot;</span>)</span></code></pre></div>
 </div>
-<div id="step-5-enrichment-analysis." class="section level2">
-<h2>Step 5: Enrichment analysis.</h2>
+<div id="step-5-enrichment-analysis" class="section level2">
+<h2>Step 5: Enrichment analysis</h2>
 <p><code>gedepir</code> includes a wrapper for <code>fgsea</code> to analyze the estimated cell type profiles.</p>
-<p>We provide several databases available for enrichment analysis available at : [[<a href="https://figshare.com/articles/dataset/Database_for_enrichment_analysis/16546470" class="uri">https://figshare.com/articles/dataset/Database_for_enrichment_analysis/16546470</a>]]</p>
-<ul>
-<li>‘Tissue.markers.RDS’</li>
-<li>‘Cancer.markers.RDS’</li>
-<li>‘Tissue.CellTypes.markers.RDS’</li>
-<li>‘Cancer_CellMatch.RDS’</li>
-<li>‘Cancer_Cell_Lines.RDS’</li>
-<li>‘GTEx.RDS’</li>
-<li>‘Reactome_2016.RDS’</li>
-<li>‘GO.DB.RDS’</li>
-<li>‘KEGG_2019_Human.RDS’</li>
-<li>‘markerscelltypes.RDS’</li>
-<li>‘CellMatchCurated.RDS’</li>
-</ul>
+<p>We provide several databases available for enrichment analysis available on <a href="https://figshare.com/articles/dataset/Database_for_enrichment_analysis/16546470">figShare</a></p>
+<table style="width:100%;">
+<colgroup>
+<col width="23%" />
+<col width="23%" />
+<col width="23%" />
+<col width="28%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Database</th>
+<th>FileName</th>
+<th>url</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CellMarker</td>
+<td>‘cellmarkerDB.RDS’</td>
+<td><a href="https://figshare.com/ndownloader/files/30904705">link</a></td>
+<td align="right">CellMarker (Zhang et al., 2019, DOI: 10.1093/nar/gky900), human restricted marker file</td>
+</tr>
+<tr class="even">
+<td>CEllMatch</td>
+<td>‘cellmatchDB.RDS’</td>
+<td><a href="https://figshare.com/ndownloader/files/30904711">link</a></td>
+<td align="right">CEllMatch (Shao et al, 2020,DOI: 10.1016/j.isci.2020.100882, included in the <a href="https://github.com/ZJUFanLab/scCATCH/tree/master/R">scCATCH tool</a></td>
+</tr>
+<tr class="odd">
+<td>NCI-60</td>
+<td>‘Cancer_Cell_Lines.RDS’</td>
+<td><a href="https://figshare.com/ndownloader/files/30593271">link</a></td>
+<td align="right">NCI-60 Human Tumor Cell Lines Screen</td>
+</tr>
+<tr class="even">
+<td>GTEx</td>
+<td>‘GTEx.RDS’</td>
+<td><a href="https://figshare.com/ndownloader/files/30593274">link</a></td>
+<td align="right">Genotype-Tissue Expression project, specific expression (up and down) for 2918 tissue samples</td>
+</tr>
+<tr class="odd">
+<td>Reactome</td>
+<td>‘Reactome_2016.RDS’</td>
+<td><a href="https://figshare.com/ndownloader/files/30593277">link</a></td>
+<td align="right">Reactome db, free, curated and peer-reviewed pathway database. v.2016</td>
+</tr>
+<tr class="even">
+<td>GO db</td>
+<td>‘GO.DB.RDS’</td>
+<td><a href="https://figshare.com/ndownloader/files/30593280">link</a></td>
+<td align="right">Gene Ontology database, annotation for functions of genes</td>
+</tr>
+<tr class="odd">
+<td>Kegg</td>
+<td>‘KEGG_2019_Human.RDS’</td>
+<td><a href="https://figshare.com/ndownloader/files/30593283">link</a></td>
+<td align="right">Kyoto Encyclopedia of Genes and Genomes database, high-level annotations from molecular-level information, v.2019</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fgsea)</span></code></pre></div>
 <pre><code>## Le chargement a nécessité le package : Rcpp</code></pre>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>database<span class="ot">=</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">&quot;https://figshare.com/ndownloader/files/30593259&quot;</span>))</span>
@@ -215,7 +262,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 
 ## [[4]]
 ##                         pathway      padj       pval        ES
-## 7 Kidney.Normal_cell.Neutrophil 0.3259838 0.04074798 0.9544087
+## 7 Kidney.Normal_cell.Neutrophil 0.3056155 0.03820193 0.9544087
 ## 
 ## [[5]]
 ## NULL
@@ -231,114 +278,75 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 
 ## [[9]]
 ##                                    pathway      padj       pval        ES
-## 8 Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1464789 0.01830986 0.9107322</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fgsea)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>database<span class="ot">=</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">&quot;https://figshare.com/ndownloader/files/30593259&quot;</span>))</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>gedepir<span class="sc">::</span><span class="fu">enrich</span>(results_NMF<span class="sc">$</span>T_matrix,<span class="at">pathways =</span> database,<span class="at">ICAbased =</span> <span class="cn">FALSE</span>, <span class="at">fdr =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<pre><code>## [[1]]
-## NULL
-## 
-## [[2]]
-## NULL
-## 
-## [[3]]
-## NULL
-## 
-## [[4]]
-##                         pathway      padj       pval        ES
-## 7 Kidney.Normal_cell.Neutrophil 0.2987158 0.03733948 0.9544087
-## 
-## [[5]]
-## NULL
-## 
-## [[6]]
-## NULL
-## 
-## [[7]]
-## NULL
-## 
-## [[8]]
-## NULL
-## 
-## [[9]]
-##                                    pathway      padj       pval        ES
-## 8 Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1353173 0.01691466 0.9107322</code></pre>
+## 8 Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1482151 0.01852689 0.9107322</code></pre>
 </div>
 <div id="step-6-build-your-pipeline" class="section level2">
 <h2>Step 6: Build your pipeline</h2>
-<p><strong>gedepir</strong> simplifies the definition of a end-to-end analysis pipeline with a set of base functions that are connected through the <em>pipes</em> syntax <code>%&gt;%</code> used in <strong>magrittr</strong>, <strong>tidyr</strong> or <strong>dplyr</strong> packages.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>results_ICA<span class="ot">=</span> D <span class="sc">%&gt;%</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_norm</span>(<span class="at">method =</span> <span class="st">&quot;RPM&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_trans</span>(<span class="at">method =</span> <span class="st">&quot;linear&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_deconv</span>(<span class="at">method =</span> <span class="st">&quot;ICA&quot;</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>gedepir<span class="sc">::</span><span class="fu">enrich</span>(results_ICA<span class="sc">$</span>T_matrix,database,<span class="at">ICAbased =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><strong>gedepir</strong> simplifies the definition of an end-to-end analysis pipeline with a set of base functions that are connected through the <em>pipes</em> syntax <code>%&gt;%</code> used in <strong>magrittr</strong>, <strong>tidyr</strong> or <strong>dplyr</strong> packages.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>results_ICA<span class="ot">=</span> D <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_norm</span>(<span class="at">method =</span> <span class="st">&quot;RPM&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_trans</span>(<span class="at">method =</span> <span class="st">&quot;linear&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_deconv</span>(<span class="at">method =</span> <span class="st">&quot;ICA&quot;</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>gedepir<span class="sc">::</span><span class="fu">enrich</span>(results_ICA<span class="sc">$</span>T_matrix,database,<span class="at">ICAbased =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>## [[1]]
-## NULL
+##                                                      pathway       padj
+## 15                    Undefined.Cancer_cell.Cancer_stem_cell 0.01443477
+## 361                   Undefined.Cancer_cell.Cancer_stem_cell 0.01443477
+## 151                    Breast.Normal_cell.Myoepithelial_cell 0.01934525
+## 451      Embryonic_prefrontal_cortex.Normal_cell.Interneuron 0.01965663
+## 159 Sclerocorneal_tissue.Normal_cell.Limbal_mesenchymal_cell 0.02240896
+## 357                       Brain.Cancer_cell.Cancer_stem_cell 0.03151639
+## 551                Embryo.Normal_cell.Morula_cell_Blastomere 0.03151639
+## 190                      Breast.Cancer_cell.Cancer_stem_cell 0.03827286
+## 389                   Undefined.Cancer_cell.Cancer_stem_cell 0.03827286
+## 40                  Blood.Normal_cell.Circulating_fetal_cell 0.03844897
+##             pval        ES
+## 15  0.0005491488 0.9977722
+## 361 0.0005491488 0.9977722
+## 151 0.0019769357 0.9933920
+## 451 0.0022078101 0.8850233
+## 159 0.0034100597 0.9761069
+## 357 0.0053669222 0.9781587
+## 551 0.0053389689 0.7448584
+## 190 0.0075575027 0.9741625
+## 389 0.0075452716 0.9498026
+## 40  0.0078593313 0.8099107
 ## 
 ## [[2]]
-##                                                   pathway       padj
-## 500 Large_intestine.Normal_cell.DCLK1plus_progenitor_cell 0.04768075
-##             pval       ES
-## 500 8.637816e-05 0.963137
+##                                        pathway       padj        pval        ES
+## 486            Lung.Normal_cell.FOXN4plus_cell 0.03031930 0.001043599 0.7744034
+## 448 Embryo.Normal_cell.Primitive_endoderm_cell 0.03894355 0.002709262 0.7197351
 ## 
 ## [[3]]
-##                                               pathway       padj         pval
-## 486                   Lung.Normal_cell.FOXN4plus_cell 0.02514119 0.0005216786
-## 4   Chorionic_villus.Normal_cell.Villous_stromal_cell 0.04913960 0.0037673130
-## 448        Embryo.Normal_cell.Primitive_endoderm_cell 0.04913960 0.0026603272
-##            ES
-## 486 0.7743916
-## 4   0.9876944
-## 448 0.7197438
+## NULL
 ## 
 ## [[4]]
-##                                                      pathway       padj
-## 15                    Undefined.Cancer_cell.Cancer_stem_cell 0.01681666
-## 361                   Undefined.Cancer_cell.Cancer_stem_cell 0.01681666
-## 151                    Breast.Normal_cell.Myoepithelial_cell 0.01725855
-## 451      Embryonic_prefrontal_cortex.Normal_cell.Interneuron 0.01938336
-## 159 Sclerocorneal_tissue.Normal_cell.Limbal_mesenchymal_cell 0.02263805
-## 357                       Brain.Cancer_cell.Cancer_stem_cell 0.03167559
-## 551                Embryo.Normal_cell.Morula_cell_Blastomere 0.03359531
-## 190                      Breast.Cancer_cell.Cancer_stem_cell 0.03754822
-## 389                   Undefined.Cancer_cell.Cancer_stem_cell 0.03754822
-## 177  Peripheral_blood.Cancer_cell.Circulating_stem_like_cell 0.04158989
-##             pval        ES
-## 15  0.0003318951 0.9978099
-## 361 0.0003318951 0.9978099
-## 151 0.0014382122 0.9933920
-## 451 0.0027677830 0.8848293
-## 159 0.0035679533 0.9761107
-## 357 0.0057117750 0.9782571
-## 551 0.0061469684 0.7451756
-## 190 0.0076889279 0.9742810
-## 389 0.0077448283 0.9499071
-## 177 0.0087399049 0.9832076
+## NULL
 ## 
 ## [[5]]
 ##                                                          pathway       padj
-## 282                                Blood.Cancer_cell.Cancer_cell 0.01287073
-## 289                           Ovary.Normal_cell.Endothelial_cell 0.01370959
-## 463                            Ovary.Cancer_cell.Epithelial_cell 0.01370959
-## 280 Hair_follicle.Normal_cell.Epithelial_hair_follicle_stem_cell 0.01460157
-## 46                            Thymus.Normal_cell.Epithelial_cell 0.01638093
-## 483                              Lung.Normal_cell.Secretory_cell 0.01654460
-## 240                            Liver.Cancer_cell.Liver_stem_cell 0.02298157
-## 326                      Bone_marrow.Normal_cell.Langerhans_cell 0.02437086
-## 276                        Undefined.Normal_cell.Epithelial_cell 0.02494178
-## 281                                Blood.Cancer_cell.Cancer_cell 0.02494178
+## 280 Hair_follicle.Normal_cell.Epithelial_hair_follicle_stem_cell 0.02258001
+## 282                                Blood.Cancer_cell.Cancer_cell 0.02258001
+## 289                           Ovary.Normal_cell.Endothelial_cell 0.02258001
+## 463                            Ovary.Cancer_cell.Epithelial_cell 0.02258001
+## 46                            Thymus.Normal_cell.Epithelial_cell 0.02457341
+## 240                            Liver.Cancer_cell.Liver_stem_cell 0.02457341
+## 483                              Lung.Normal_cell.Secretory_cell 0.02457341
+## 326                      Bone_marrow.Normal_cell.Langerhans_cell 0.02474328
+## 24            Nucleus_pulposus.Normal_cell.Nucleus_pulposus_cell 0.02992694
+## 281                                Blood.Cancer_cell.Cancer_cell 0.02992694
 ##             pval        ES
-## 282 9.681479e-05 0.9915625
-## 289 4.574984e-04 0.9684360
-## 463 4.574984e-04 0.9684360
-## 280 6.487188e-04 0.9909539
-## 46  1.259975e-03 0.9811640
-## 483 1.408689e-03 0.7664802
-## 240 2.414730e-03 0.9661776
-## 326 2.817185e-03 0.9650088
-## 276 3.017241e-03 0.9903225
-## 281 3.027354e-03 0.9804395</code></pre>
+## 280 4.364430e-04 0.9909463
+## 282 9.758954e-05 0.9915591
+## 289 2.738726e-04 0.9684373
+## 463 2.738726e-04 0.9684373
+## 46  1.163037e-03 0.9811587
+## 240 2.139364e-03 0.9661636
+## 483 1.238739e-03 0.7665498
+## 326 2.241239e-03 0.9649885
+## 24  3.610813e-03 0.9503464
+## 281 3.273322e-03 0.9804395</code></pre>
 </div>
 
 

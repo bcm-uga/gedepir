@@ -2,9 +2,12 @@
 title: "Generate_markerDB"
 author: "Yuna Blum"
 date: "`r Sys.Date()`"
-output:
-  rmarkdown::html_document:
-    number_sections: true
+output:  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Generate_markerDB}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 ---
 
 ```{r setup, include=FALSE}

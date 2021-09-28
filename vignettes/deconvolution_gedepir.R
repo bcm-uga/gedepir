@@ -15,15 +15,10 @@ library(gedepir)
  D_trans= run_trans(mix_matrix = D_norm,method = "log2")
 
 ## ----run_featsel--------------------------------------------------------------
- D_fsel= run_featsel(mix_matrix = D_trans,method = "cv1000")
+ D_fsel= run_featsel(mix_matrix = D_trans, method = "cv1000")
 
 ## ----deconv-------------------------------------------------------------------
 results_NMF = run_deconv(mix_matrix = D_fsel,k= 9, method = "NMF")
-
-## ----enrich-------------------------------------------------------------------
-library(fgsea)
-database= readRDS(url("https://figshare.com/ndownloader/files/30593259"))
-gedepir::enrich(results_NMF$T_matrix,pathways = database,ICAbased = FALSE, fdr = FALSE)
 
 ## ----enrich-------------------------------------------------------------------
 library(fgsea)
