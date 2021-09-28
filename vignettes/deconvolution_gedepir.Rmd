@@ -3,8 +3,10 @@ title: "Estimating cell-type composition using Gene Expression data"
 author: "S Karkar, M Richard, Y Blum"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   rmarkdown::html_vignette: default
+  html_document:
+    df_print: paged
+  pdf_document: default
 keep_md: yes
 vignette: |
   %\VignetteIndexEntry{Estimating cell-type composition using Gene Expression data} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
@@ -74,17 +76,17 @@ results_NMF = run_deconv(mix_matrix = D_fsel,k= 9, method = "NMF")
 ## Step 5: Enrichment analysis
 `gedepir` includes a wrapper for `fgsea` to analyze  the estimated cell type profiles.
 
-We provide several databases available for enrichment analysis available at :
-[[https://figshare.com/articles/dataset/Database_for_enrichment_analysis/16546470]]
+We provide several databases available for enrichment analysis available on [figShare](https://figshare.com/articles/dataset/Database_for_enrichment_analysis/16546470)
 
-  + 'Tissue.markers.RDS' Tissue database : 906 markers list  for 110 organs
-  + 'Cancer.markers.RDS'  Cancer database : 325 markers lists for 33 cancer types
-  + 'Tissue.CellTypes.markers.RDS'   : Tissue + Cancer database
-  + 'Cancer_Cell_Lines.RDS' : NCI-60 Human Tumor Cell Lines Screen
-  + 'GTEx.RDS' Genotype-Tissue Expression project, specific expression (up and down) for 2918 tissue samples
-  + 'Reactome_2016.RDS' : Reactome pathway database
-  + 'GO.DB.RDS' : Gene Ontology database,  annotation for functions of genes
-  + 'KEGG_2019_Human.RDS' :  Kyoto Encyclopedia of Genes and Genomes database, high-level annotations from molecular-level information
+Database| FileName | url | Description 
+-----|-----|-----|-----:
+CellMarker| 'cellmarkerDB.RDS'| [link](https://figshare.com/ndownloader/files/30904705) | CellMarker (Zhang et al., 2019, DOI: 10.1093/nar/gky900), human restricted marker file
+CEllMatch|'cellmatchDB.RDS' |[link](https://figshare.com/ndownloader/files/30904711) |  CEllMatch (Shao et al, 2020,DOI: 10.1016/j.isci.2020.100882, included in the [scCATCH tool](https://github.com/ZJUFanLab/scCATCH/tree/master/R)
+NCI-60  |  'Cancer_Cell_Lines.RDS' | [link](https://figshare.com/ndownloader/files/30593271) | NCI-60 Human Tumor Cell Lines Screen 
+GTEx | 'GTEx.RDS'|[link](https://figshare.com/ndownloader/files/30593274)|  Genotype-Tissue Expression project, specific expression (up and down) for 2918 tissue samples
+Reactome | 'Reactome_2016.RDS' | [link](https://figshare.com/ndownloader/files/30593277) |Reactome db, free, curated and peer-reviewed pathway database.  v.2016
+GO db|  'GO.DB.RDS'  | [link](https://figshare.com/ndownloader/files/30593280)| Gene Ontology database,  annotation for functions of genes
+Kegg  |  'KEGG_2019_Human.RDS' | [link](https://figshare.com/ndownloader/files/30593283) |   Kyoto Encyclopedia of Genes and Genomes database, high-level annotations from molecular-level information, v.2019
   
 
 
