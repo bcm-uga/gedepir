@@ -16,4 +16,5 @@ BiocManager::install(c("NMF","fgsea"))
 remotes::install_github("bcm-uga/gedepir",build_vignettes = TRUE)
 ```
 
-
+## Usage
+Vignette for basic usage is available at : [https://bcm-uga.github.io/gedepir/](https://bcm-uga.github.io/gedepir/)
