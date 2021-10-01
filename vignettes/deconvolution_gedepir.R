@@ -27,9 +27,13 @@ gedepir::enrich(results_NMF$T_matrix,pathways = database,ICAbased = FALSE, fdr =
 
 ## ----pipeline-----------------------------------------------------------------
 library(magrittr)
-results_ICA= D %>%
+results_NMF= D %>%
   run_norm(method = "RPM") %>%
   run_trans(method = "linear") %>%
-  run_deconv(method = "ICA")
-gedepir::enrich(results_ICA$T_matrix,database,ICAbased = TRUE)
+  run_featsel(method = "cv1000") %>%
+  run_deconv(method = "ICA", ,k= 9)
+gedepir::enrich(results_NMF$T_matrix,
+                database,
+                ICAbased = FALSE,
+                fdr = FALSE)
 

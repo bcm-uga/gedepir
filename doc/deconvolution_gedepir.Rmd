@@ -103,10 +103,14 @@ gedepir::enrich(results_NMF$T_matrix,pathways = database,ICAbased = FALSE, fdr =
 **gedepir** simplifies the definition of an end-to-end analysis pipeline with a set of base functions that are connected through the *pipes* syntax `  %>% `  used in **magrittr**,   **tidyr** or   **dplyr**  packages.
 ```{r pipeline}
 library(magrittr)
-results_ICA= D %>%
+results_NMF= D %>%
   run_norm(method = "RPM") %>%
   run_trans(method = "linear") %>%
-  run_deconv(method = "ICA")
-gedepir::enrich(results_ICA$T_matrix,database,ICAbased = TRUE)
+  run_featsel(method = "cv1000") %>%
+  run_deconv(method = "ICA", ,k= 9)
+gedepir::enrich(results_NMF$T_matrix,
+                database,
+                ICAbased = FALSE,
+                fdr = FALSE)
 ```
 

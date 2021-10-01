@@ -12,7 +12,7 @@
 
 <meta name="author" content="S Karkar, M Richard, Y Blum" />
 
-<meta name="date" content="2021-09-28" />
+<meta name="date" content="2021-10-01" />
 
 <title>Estimating cell-type composition using Gene Expression data</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Estimating cell-type composition using Gene Expression data</h1>
 <h4 class="author">S Karkar, M Richard, Y Blum</h4>
-<h4 class="date">2021-09-28</h4>
+<h4 class="date">2021-10-01</h4>
 
 
 
@@ -262,7 +262,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 
 ## [[4]]
 ##                         pathway      padj       pval        ES
-## 7 Kidney.Normal_cell.Neutrophil 0.3056155 0.03820193 0.9544087
+## 7 Kidney.Normal_cell.Neutrophil 0.3117533 0.03896916 0.9544087
 ## 
 ## [[5]]
 ## NULL
@@ -278,45 +278,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 
 ## [[9]]
 ##                                    pathway      padj       pval        ES
-## 8 Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1482151 0.01852689 0.9107322</code></pre>
+## 8 Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1152885 0.01441107 0.9107322</code></pre>
 </div>
 <div id="step-6-build-your-pipeline" class="section level2">
 <h2>Step 6: Build your pipeline</h2>
 <p><strong>gedepir</strong> simplifies the definition of an end-to-end analysis pipeline with a set of base functions that are connected through the <em>pipes</em> syntax <code>%&gt;%</code> used in <strong>magrittr</strong>, <strong>tidyr</strong> or <strong>dplyr</strong> packages.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>results_ICA<span class="ot">=</span> D <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>results_NMF<span class="ot">=</span> D <span class="sc">%&gt;%</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_norm</span>(<span class="at">method =</span> <span class="st">&quot;RPM&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_trans</span>(<span class="at">method =</span> <span class="st">&quot;linear&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_deconv</span>(<span class="at">method =</span> <span class="st">&quot;ICA&quot;</span>)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>gedepir<span class="sc">::</span><span class="fu">enrich</span>(results_ICA<span class="sc">$</span>T_matrix,database,<span class="at">ICAbased =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_featsel</span>(<span class="at">method =</span> <span class="st">&quot;cv1000&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_deconv</span>(<span class="at">method =</span> <span class="st">&quot;ICA&quot;</span>, ,<span class="at">k=</span> <span class="dv">9</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>gedepir<span class="sc">::</span><span class="fu">enrich</span>(results_NMF<span class="sc">$</span>T_matrix,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                database,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">ICAbased =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">fdr =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>## [[1]]
-##                                                      pathway       padj
-## 15                    Undefined.Cancer_cell.Cancer_stem_cell 0.01443477
-## 361                   Undefined.Cancer_cell.Cancer_stem_cell 0.01443477
-## 151                    Breast.Normal_cell.Myoepithelial_cell 0.01934525
-## 451      Embryonic_prefrontal_cortex.Normal_cell.Interneuron 0.01965663
-## 159 Sclerocorneal_tissue.Normal_cell.Limbal_mesenchymal_cell 0.02240896
-## 357                       Brain.Cancer_cell.Cancer_stem_cell 0.03151639
-## 551                Embryo.Normal_cell.Morula_cell_Blastomere 0.03151639
-## 190                      Breast.Cancer_cell.Cancer_stem_cell 0.03827286
-## 389                   Undefined.Cancer_cell.Cancer_stem_cell 0.03827286
-## 40                  Blood.Normal_cell.Circulating_fetal_cell 0.03844897
-##             pval        ES
-## 15  0.0005491488 0.9977722
-## 361 0.0005491488 0.9977722
-## 151 0.0019769357 0.9933920
-## 451 0.0022078101 0.8850233
-## 159 0.0034100597 0.9761069
-## 357 0.0053669222 0.9781587
-## 551 0.0053389689 0.7448584
-## 190 0.0075575027 0.9741625
-## 389 0.0075452716 0.9498026
-## 40  0.0078593313 0.8099107
+##                                                                        pathway
+## 30 Umbilical_cord_blood.Normal_cell.Lymphoidprimed_multipotent_progenitor_cell
+##         padj       pval       ES
+## 30 0.7290349 0.04854145 0.946903
 ## 
 ## [[2]]
-##                                        pathway       padj        pval        ES
-## 486            Lung.Normal_cell.FOXN4plus_cell 0.03031930 0.001043599 0.7744034
-## 448 Embryo.Normal_cell.Primitive_endoderm_cell 0.03894355 0.002709262 0.7197351
+## NULL
 ## 
 ## [[3]]
 ## NULL
@@ -325,28 +309,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## NULL
 ## 
 ## [[5]]
-##                                                          pathway       padj
-## 280 Hair_follicle.Normal_cell.Epithelial_hair_follicle_stem_cell 0.02258001
-## 282                                Blood.Cancer_cell.Cancer_cell 0.02258001
-## 289                           Ovary.Normal_cell.Endothelial_cell 0.02258001
-## 463                            Ovary.Cancer_cell.Epithelial_cell 0.02258001
-## 46                            Thymus.Normal_cell.Epithelial_cell 0.02457341
-## 240                            Liver.Cancer_cell.Liver_stem_cell 0.02457341
-## 483                              Lung.Normal_cell.Secretory_cell 0.02457341
-## 326                      Bone_marrow.Normal_cell.Langerhans_cell 0.02474328
-## 24            Nucleus_pulposus.Normal_cell.Nucleus_pulposus_cell 0.02992694
-## 281                                Blood.Cancer_cell.Cancer_cell 0.02992694
-##             pval        ES
-## 280 4.364430e-04 0.9909463
-## 282 9.758954e-05 0.9915591
-## 289 2.738726e-04 0.9684373
-## 463 2.738726e-04 0.9684373
-## 46  1.163037e-03 0.9811587
-## 240 2.139364e-03 0.9661636
-## 483 1.238739e-03 0.7665498
-## 326 2.241239e-03 0.9649885
-## 24  3.610813e-03 0.9503464
-## 281 3.273322e-03 0.9804395</code></pre>
+## NULL
+## 
+## [[6]]
+## NULL
+## 
+## [[7]]
+##                                        pathway      padj        pval        ES
+## 2     Blood.Normal_cell.Circulating_fetal_cell 0.1016135 0.003079197 0.9962322
+## 32 Blood.Normal_cell.CD1Cplus_B_dendritic_cell 0.2418401 0.014656977 0.9849699
+## 
+## [[8]]
+##                                   pathway      padj       pval       ES
+## 23 Pancreatic_islet.Normal_cell.Beta_cell 0.9459097 0.04861422 0.944659
+## 
+## [[9]]
+##                                           pathway      padj        pval
+## 33       Brain.Normal_cell.Lake_et_al.Science.Ex8 0.1835145 0.007420814
+## 29 Large_intestine.Normal_cell.LGR5plus_stem_cell 0.1835145 0.020744975
+##           ES
+## 33 0.8473435
+## 29 0.7577889</code></pre>
 </div>
 
 
