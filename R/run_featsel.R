@@ -18,7 +18,7 @@
 #' @export
 
 
-run_featsel <- function(mix_matrix, method) {
+run_featsel <- function(mix_matrix, method, n=100) {
   cv_sel <- function(mat, nmarker) {
     mm <- apply(mat,1,mean)
     vv <- apply(mat,1,var)
@@ -29,7 +29,7 @@ run_featsel <- function(mix_matrix, method) {
     return(mat[index.select, ])
   }
   if (!{
-    method %in% c("cv1000", "cv5000", "none",  "None")
+    method %in% c("cv1000", "cv5000", "none",  "None", "n")
   }) {
     print("Unknown method argument, please specify a method within the following list: cv, none")
   }
@@ -41,7 +41,11 @@ run_featsel <- function(mix_matrix, method) {
   } else if (method == "cv5000") {
     nmarker <- 5000
     sel.mat <- cv_sel(mix_matrix, nmarker)
-  }
+  } else if (method == "n") {
+    nmarker <- n
+    sel.mat <- cv_sel(mix_matrix, nmarker)
+  } 
+  
 
   return(sel.mat)
 }

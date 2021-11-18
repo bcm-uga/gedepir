@@ -4,7 +4,7 @@
 \alias{run_featsel}
 \title{Function to run RNAseq feature selection}
 \usage{
-run_featsel(mix_matrix, method)
+run_featsel(mix_matrix, method, n = 100)
 }
 \arguments{
 \item{mix_matrix}{The gene expression matrix samples \emph{x} genes.}
