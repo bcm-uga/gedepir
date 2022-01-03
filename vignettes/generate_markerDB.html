@@ -12,7 +12,7 @@
 
 <meta name="author" content="Yuna Blum" />
 
-<meta name="date" content="2021-09-28" />
+<meta name="date" content="2022-01-03" />
 
 <title>Generate_markerDB</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Generate_markerDB</h1>
 <h4 class="author">Yuna Blum</h4>
-<h4 class="date">2021-09-28</h4>
+<h4 class="date">2022-01-03</h4>
 
 
 
@@ -161,24 +161,22 @@ Link to download the database: <a href="https://github.com/ZJUFanLab/scCATCH/tre
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#CEllmatch</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sysdata_cellmatch<span class="ot">=</span><span class="fu">tempfile</span>()</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>curl<span class="sc">::</span><span class="fu">curl_download</span>(<span class="at">url=</span><span class="st">&quot;https://github.com/ZJUFanLab/scCATCH/raw/master/R/sysdata.rda&quot;</span>, sysdata_cellmatch)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>curl<span class="sc">::</span><span class="fu">curl_download</span>(<span class="at">url=</span><span class="st">&quot;https://github.com/ZJUFanLab/scCATCH/raw/master/data/cellmatch.rda&quot;</span>, sysdata_cellmatch)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(sysdata_cellmatch)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>()</span></code></pre></div>
-<pre><code>##  [1] &quot;CellMatch&quot;         &quot;D&quot;                 &quot;D_fsel&quot;           
-##  [4] &quot;D_norm&quot;            &quot;D_trans&quot;           &quot;cellmarker&quot;       
-##  [7] &quot;database&quot;          &quot;geneinfo&quot;          &quot;oldLC&quot;            
-## [10] &quot;results_ICA&quot;       &quot;results_NMF&quot;       &quot;sysdata_cellmatch&quot;</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cellmatch <span class="ot">=</span> CellMatch</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(sysdata_cellmatch)</span></code></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># cellmatch = CellMatch</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(sysdata_cellmatch)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>()</span></code></pre></div>
+<pre><code>## [1] &quot;cellmarker&quot;        &quot;cellmatch&quot;         &quot;oldLC&quot;            
+## [4] &quot;sysdata_cellmatch&quot;</code></pre>
 </div>
 <div id="filters-on-the-databases" class="section level2">
 <h2>Filters on the databases</h2>
 <p>Some filters are applied on the databases: * Restrict markers to human markers if several species are included. * Restrict to available gene symbols. * Set a minimal number of genes per cell population * Set a maximum number of genes per cell population</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Filtering the cellmarker object</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Remove NA values</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cellmarker <span class="ot">=</span> cellmarker[<span class="sc">-</span><span class="fu">which</span>(<span class="fu">is.na</span>(cellmarker<span class="sc">$</span>geneSymbol)), ]</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cellmarker)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Filtering the cellmarker object</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Remove NA values</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>cellmarker <span class="ot">=</span> cellmarker[<span class="sc">-</span><span class="fu">which</span>(<span class="fu">is.na</span>(cellmarker<span class="sc">$</span>geneSymbol)), ]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cellmarker)</span></code></pre></div>
 <pre><code>##   speciesType         tissueType UberonOntologyID cancerType    cellType
 ## 1       Human             Kidney   UBERON_0002113     Normal Normal cell
 ## 2       Human              Liver   UBERON_0002107     Normal Normal cell
@@ -207,23 +205,23 @@ Link to download the database: <a href="https://github.com/ZJUFanLab/scCATCH/tre
 ## 4     Experiment 10920202      NA
 ## 5     Experiment 12407152      NA
 ## 6     Experiment 15950061      NA</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieve all the genes per cell population: each line corresponds to a particular cell populations. The gene markers are separated by a coma.</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>allgenes <span class="ot">=</span> <span class="fu">lapply</span>(<span class="fu">sapply</span>(cellmarker<span class="sc">$</span>geneSymbol,<span class="cf">function</span>(x){<span class="fu">strsplit</span>(<span class="fu">as.character</span>(x),<span class="st">&quot;, &quot;</span>)}), <span class="cf">function</span>(x){genes <span class="ot">=</span> <span class="fu">unique</span>(<span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">[|]&quot;</span>, <span class="st">&quot;&quot;</span>, x)) ; <span class="fu">return</span>(genes)})</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the names of cell population mentionning the tissue type and cell type</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>cellID <span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmarker<span class="sc">$</span>tissueType),  <span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmarker<span class="sc">$</span>cellType), <span class="fu">gsub</span>(<span class="st">&quot;[+]&quot;</span>, <span class="st">&quot;plus&quot;</span>, <span class="fu">gsub</span>(<span class="st">&quot;[(]|[)]|-&quot;</span>,<span class="st">&quot;&quot;</span>, <span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmarker<span class="sc">$</span>cellName))), <span class="at">sep=</span><span class="st">&quot;.&quot;</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform the df into a list. Note that some cell populations are specified several times in the file, with common genes. In addition we remove the NA values.</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>liter_cellmarker <span class="ot">=</span> <span class="fu">tapply</span>(cellmarker<span class="sc">$</span>geneSymbol, cellID, <span class="cf">function</span>(x){genes <span class="ot">=</span> <span class="fu">unique</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(<span class="fu">as.character</span>(x),<span class="st">&quot;, &quot;</span>))) ; <span class="cf">if</span>(<span class="fu">sum</span>(genes<span class="sc">==</span><span class="st">&quot;NA&quot;</span>)<span class="sc">&gt;</span><span class="dv">0</span>){genes <span class="ot">=</span> genes[<span class="sc">-</span><span class="fu">which</span>(genes<span class="sc">==</span><span class="st">&quot;NA&quot;</span>)]} ; <span class="fu">return</span>(genes)})</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Filtering for the number of genes.</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>nbgenes <span class="ot">=</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(liter_cellmarker, length))</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>liter_cellmarker_filter <span class="ot">=</span> liter_cellmarker[<span class="fu">which</span>(nbgenes<span class="sc">&gt;=</span><span class="dv">3</span> <span class="sc">&amp;</span> nbgenes<span class="sc">&lt;=</span><span class="dv">200</span>)]</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(liter_cellmarker_filter)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieve all the genes per cell population: each line corresponds to a particular cell populations. The gene markers are separated by a coma.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>allgenes <span class="ot">=</span> <span class="fu">lapply</span>(<span class="fu">sapply</span>(cellmarker<span class="sc">$</span>geneSymbol,<span class="cf">function</span>(x){<span class="fu">strsplit</span>(<span class="fu">as.character</span>(x),<span class="st">&quot;, &quot;</span>)}), <span class="cf">function</span>(x){genes <span class="ot">=</span> <span class="fu">unique</span>(<span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">[|]&quot;</span>, <span class="st">&quot;&quot;</span>, x)) ; <span class="fu">return</span>(genes)})</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the names of cell population mentionning the tissue type and cell type</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>cellID <span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmarker<span class="sc">$</span>tissueType),  <span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmarker<span class="sc">$</span>cellType), <span class="fu">gsub</span>(<span class="st">&quot;[+]&quot;</span>, <span class="st">&quot;plus&quot;</span>, <span class="fu">gsub</span>(<span class="st">&quot;[(]|[)]|-&quot;</span>,<span class="st">&quot;&quot;</span>, <span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmarker<span class="sc">$</span>cellName))), <span class="at">sep=</span><span class="st">&quot;.&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform the df into a list. Note that some cell populations are specified several times in the file, with common genes. In addition we remove the NA values.</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>liter_cellmarker <span class="ot">=</span> <span class="fu">tapply</span>(cellmarker<span class="sc">$</span>geneSymbol, cellID, <span class="cf">function</span>(x){genes <span class="ot">=</span> <span class="fu">unique</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(<span class="fu">as.character</span>(x),<span class="st">&quot;, &quot;</span>))) ; <span class="cf">if</span>(<span class="fu">sum</span>(genes<span class="sc">==</span><span class="st">&quot;NA&quot;</span>)<span class="sc">&gt;</span><span class="dv">0</span>){genes <span class="ot">=</span> genes[<span class="sc">-</span><span class="fu">which</span>(genes<span class="sc">==</span><span class="st">&quot;NA&quot;</span>)]} ; <span class="fu">return</span>(genes)})</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Filtering for the number of genes.</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>nbgenes <span class="ot">=</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(liter_cellmarker, length))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>liter_cellmarker_filter <span class="ot">=</span> liter_cellmarker[<span class="fu">which</span>(nbgenes<span class="sc">&gt;=</span><span class="dv">3</span> <span class="sc">&amp;</span> nbgenes<span class="sc">&lt;=</span><span class="dv">200</span>)]</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(liter_cellmarker_filter)</span></code></pre></div>
 <pre><code>## [1] 346</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>liter_cellmarker_filter[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>liter_cellmarker_filter[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div>
 <pre><code>## $Abdominal_adipose_tissue.Normal_cell.Adiposederived_stem_cell
 ## [1] &quot;ENG&quot;    &quot;ITGB1&quot;  &quot;PECAM1&quot; &quot;CD34&quot;   &quot;CD44&quot;   &quot;ITGA4&quot;  &quot;NT5E&quot;   &quot;THY1&quot;  
 ## 
@@ -234,73 +232,54 @@ Link to download the database: <a href="https://github.com/ZJUFanLab/scCATCH/tre
 ## $Adipose_tissue.Normal_cell.Adiposederived_stromal_cell
 ##  [1] &quot;CDH5&quot;   &quot;PECAM1&quot; &quot;CD34&quot;   &quot;MME&quot;    &quot;ENG&quot;    &quot;ANPEP&quot;  &quot;ALCAM&quot;  &quot;ITGB1&quot; 
 ##  [9] &quot;CD44&quot;   &quot;TFRC&quot;   &quot;NT5E&quot;   &quot;THY1&quot;</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Filtering the cellmarker object</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Keep only human markers</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>cellmatch <span class="ot">=</span> cellmatch[cellmatch<span class="sc">$</span>speciesType <span class="sc">==</span> <span class="st">&quot;Human&quot;</span>,]</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cellmatch)</span></code></pre></div>
-<pre><code>##   speciesType         tissueType cancerType    cellType
-## 1       Human             Kidney     Normal Normal cell
-## 2       Human              Liver     Normal Normal cell
-## 3       Human        Endometrium     Normal Normal cell
-## 4       Human               Germ     Normal Normal cell
-## 5       Human Corneal epithelium     Normal Normal cell
-## 6       Human           Placenta     Normal Normal cell
-##                           cellName                      cellMarker geneSymbol
-## 1            Proximal tubular cell Intestinal Alkaline Phosphatase       ALPI
-## 2 Ito cell (hepatic stellate cell)                   Synaptophysin        SYP
-## 3                 Trophoblast cell                         CEACAM1    CEACAM1
-## 4             Primordial germ cell                            VASA       DDX4
-## 5                  Epithelial cell                            KLF6       KLF6
-## 6                  Cytotrophoblast                           FGF10      FGF10
-##   geneID markerResource     PMID third second      first
-## 1    248     Experiment  9263997  &lt;NA&gt;   &lt;NA&gt;       &lt;NA&gt;
-## 2   6855     Experiment 10595912  &lt;NA&gt;   &lt;NA&gt;       &lt;NA&gt;
-## 3    634     Experiment 10751340  &lt;NA&gt;   &lt;NA&gt;       &lt;NA&gt;
-## 4  54514     Experiment 10920202  &lt;NA&gt;   &lt;NA&gt; Primordial
-## 5   1316     Experiment 12407152  &lt;NA&gt;   &lt;NA&gt;       &lt;NA&gt;
-## 6   2255     Experiment 15950061  &lt;NA&gt;   &lt;NA&gt;       &lt;NA&gt;
-##                          shortname
-## 1            Proximal Tubular Cell
-## 2 Ito Cell (Hepatic Stellate Cell)
-## 3                 Trophoblast Cell
-## 4                        Germ Cell
-## 5                  Epithelial Cell
-## 6                  Cytotrophoblast</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Prepare the names of cell population mentionning the tissue type and cell type</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cellID <span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmatch<span class="sc">$</span>tissueType),  <span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmatch<span class="sc">$</span>cellType), <span class="fu">gsub</span>(<span class="st">&quot;[+]&quot;</span>, <span class="st">&quot;plus&quot;</span>, <span class="fu">gsub</span>(<span class="st">&quot;[(]|[)]|-&quot;</span>,<span class="st">&quot;&quot;</span>, <span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmatch<span class="sc">$</span>cellName))), <span class="at">sep=</span><span class="st">&quot;.&quot;</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Transform the df into a list. </span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>liter_cellmatch <span class="ot">=</span> <span class="fu">tapply</span>(cellmatch<span class="sc">$</span>geneSymbol, cellID, list)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>liter_cellmatch <span class="ot">=</span> <span class="fu">lapply</span>(liter_cellmatch, <span class="cf">function</span>(x) <span class="fu">unique</span>(x))</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Filtering for the number of genes.</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>nbgenes <span class="ot">=</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(liter_cellmatch, length))</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>liter_cellmatch_filter <span class="ot">=</span> liter_cellmatch[<span class="fu">which</span>(nbgenes<span class="sc">&gt;=</span><span class="dv">3</span> <span class="sc">&amp;</span> nbgenes<span class="sc">&lt;=</span><span class="dv">200</span>)]</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(liter_cellmatch_filter)</span></code></pre></div>
-<pre><code>## [1] 566</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>liter_cellmatch_filter[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div>
-<pre><code>## $Abdominal_adipose_tissue.Normal_cell.Adiposederived_stem_cell
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Filtering the cellmarker object</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Keep only human markers</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>cellmatch <span class="ot">=</span> cellmatch[cellmatch<span class="sc">$</span>species <span class="sc">==</span> <span class="st">&quot;Human&quot;</span>,]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cellmatch)</span></code></pre></div>
+<pre><code>##   species             tissue cancer   condition   subtype1 subtype2 subtype3
+## 1   Human             Kidney Normal Normal cell       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;
+## 2   Human              Liver Normal Normal cell       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;
+## 3   Human        Endometrium Normal Normal cell       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;
+## 4   Human               Germ Normal Normal cell Primordial     &lt;NA&gt;     &lt;NA&gt;
+## 5   Human Corneal epithelium Normal Normal cell       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;
+## 6   Human           Placenta Normal Normal cell       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;
+##                           celltype    gene   resource     pmid
+## 1            Proximal Tubular Cell    ALPI Experiment  9263997
+## 2 Ito Cell (Hepatic Stellate Cell)     SYP Experiment 10595912
+## 3                 Trophoblast Cell CEACAM1 Experiment 10751340
+## 4                        Germ Cell    DDX4 Experiment 10920202
+## 5                  Epithelial Cell    KLF6 Experiment 12407152
+## 6                  Cytotrophoblast   FGF10 Experiment 15950061</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Prepare the names of cell population mentionning the tissue type and cell type</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>cellID <span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmatch<span class="sc">$</span>tissue),  <span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmatch<span class="sc">$</span>celltype), <span class="fu">gsub</span>(<span class="st">&quot;[+]&quot;</span>, <span class="st">&quot;plus&quot;</span>, <span class="fu">gsub</span>(<span class="st">&quot;[(]|[)]|-&quot;</span>,<span class="st">&quot;&quot;</span>, <span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;_&quot;</span>, cellmatch<span class="sc">$</span>cellName))), <span class="at">sep=</span><span class="st">&quot;.&quot;</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Transform the df into a list. </span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>liter_cellmatch <span class="ot">=</span> <span class="fu">tapply</span>(cellmatch<span class="sc">$</span>gene, cellID, list)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>liter_cellmatch <span class="ot">=</span> <span class="fu">lapply</span>(liter_cellmatch, <span class="cf">function</span>(x) <span class="fu">unique</span>(x))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Filtering for the number of genes.</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>nbgenes <span class="ot">=</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(liter_cellmatch, length))</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>liter_cellmatch_filter <span class="ot">=</span> liter_cellmatch[<span class="fu">which</span>(nbgenes<span class="sc">&gt;=</span><span class="dv">3</span> <span class="sc">&amp;</span> nbgenes<span class="sc">&lt;=</span><span class="dv">200</span>)]</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(liter_cellmatch_filter)</span></code></pre></div>
+<pre><code>## [1] 391</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>liter_cellmatch_filter[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div>
+<pre><code>## $Abdominal_adipose_tissue.Stem_Cell.
 ##  [1] &quot;ENG&quot;    &quot;ITGB1&quot;  &quot;PECAM1&quot; &quot;CD34&quot;   &quot;CD44&quot;   &quot;ITGA4&quot;  &quot;NT5E&quot;   &quot;THY1&quot;  
 ##  [9] &quot;CD14&quot;   &quot;PTPRC&quot; 
 ## 
-## $Adipose_tissue.Normal_cell.Adiposederived_stem_cell
-##  [1] &quot;MCAM&quot;   &quot;THY1&quot;   &quot;KLF4&quot;   &quot;NANOG&quot;  &quot;NES&quot;    &quot;POU5F1&quot; &quot;PDGFRB&quot; &quot;SOX2&quot;  
-##  [9] &quot;VCAM1&quot;  &quot;ITGB1&quot;  &quot;PECAM1&quot; &quot;CD34&quot;   &quot;PTPRC&quot;  &quot;ENG&quot;    &quot;KIT&quot;    &quot;NT5E&quot;  
-## [17] &quot;NGFR&quot;   &quot;ITGA1&quot;  &quot;CD44&quot;   &quot;CD9&quot;    &quot;MYC&quot;    &quot;MME&quot;    &quot;ITGAL&quot;  &quot;ITGAX&quot; 
-## [25] &quot;CDH5&quot;   &quot;ITGA4&quot;  &quot;ICAM1&quot;  &quot;CD55&quot;   &quot;CD59&quot;   &quot;TFRC&quot;  
+## $Adipose_tissue.Endothelial_Cell.
+## [1] &quot;PECAM1&quot; &quot;VWF&quot;    &quot;CD34&quot;   &quot;ENG&quot;    &quot;ABCG2&quot;  &quot;PROM1&quot; 
 ## 
-## $Adipose_tissue.Normal_cell.Adiposederived_stromal_cell
-##  [1] &quot;CDH5&quot;   &quot;PECAM1&quot; &quot;CD34&quot;   &quot;MME&quot;    &quot;ENG&quot;    &quot;ANPEP&quot;  &quot;ALCAM&quot;  &quot;ITGB1&quot; 
-##  [9] &quot;CD44&quot;   &quot;TFRC&quot;   &quot;NT5E&quot;   &quot;THY1&quot;   &quot;VCAM1&quot;  &quot;PTPRC&quot;  &quot;MYC&quot;    &quot;KLF4&quot;  
-## [17] &quot;NANOG&quot;  &quot;POU5F1&quot; &quot;SOX2&quot;</code></pre>
+## $Adipose_tissue.Fat_Cell.
+## [1] &quot;VCAM1&quot; &quot;ITGB1&quot; &quot;CD34&quot;  &quot;CD44&quot;  &quot;PTPRC&quot;</code></pre>
 </div>
 <div id="saving-databases" class="section level2">
 <h2>Saving databases</h2>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(liter_cellmarker_filter, <span class="st">&quot;cellmarkerDB.RDS&quot;</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(liter_cellmatch_filter, <span class="st">&quot;cellmatchDB.RDS&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(liter_cellmarker_filter, <span class="st">&quot;cellmarkerDB.RDS&quot;</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(liter_cellmatch_filter, <span class="st">&quot;cellmatchDB.RDS&quot;</span>)</span></code></pre></div>
 <p>Note (i) that the last code is not running when running the vignette. Note (ii) that the marker DB objects are in the list format as it is required in the fgsea function from the R package fgsea.</p>
 </div>
 
