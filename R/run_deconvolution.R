@@ -33,10 +33,10 @@ run_deconv <-
            gene_id = NULL,
            cpu_number = NULL) {
     if (!{
-      method %in% c("NMF", "ICA", "CDSeq", "PREDE", "DSA")
+      method %in% c("NMF", "ICA", "ICA-deconica", "CDSeq", "PREDE","debCAM")
     }) {
       print(
-        "Unknown method argument, please specify a method within the following list: NMF, ICA, CDSeq, PREDE, DSA"
+        "Unknown method argument, please specify a method within the following list: NMF, ICA, ICA-deconica, debCAM, CDSeq, PREDE"
       )
     }
 
@@ -265,6 +265,20 @@ run_deconv <-
 
       A_matrix <- result1$estProp
       T_matrix <- result1$estGEP
+    }
+    
+    if (method == "debCAM") {
+      if (!requireNamespace("debCAM", quietly = TRUE)) {
+        stop("Package \"debCAM\" needed for this function to work. Please install it.",
+             call. = FALSE
+        )
+      }
+      rCAM <- debCAM::CAM(data =  mix_matrix,
+                          K = k,
+                          thres.low = 0.30, thres.high = 0.95)
+
+      A_matrix <- debCAM::Amat(rCAM, k)
+      T_matrix <- debCAM::Smat(rCAM, k)
     }
 
     return(list(A_matrix = A_matrix, T_matrix = T_matrix))
