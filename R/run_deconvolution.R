@@ -273,11 +273,20 @@ run_deconv <-
              call. = FALSE
         )
       }
+      cluster.num = min(5*k, ncol(mix_matrix) - 1 )
+      if (nrow(mix_matrix) < 200) {
+        dim.rdc =max(cluster.num, nrow(mix_matrix)/10 ) 
+      }else dim.rdc= 10
       rCAM <- debCAM::CAM(data =  mix_matrix,
                           K = k,
-                          thres.low = 0.30, thres.high = 0.95)
+                          cluster.num =cluster.num,
+                          MG.num.thres = 1,
+                          lof.thres =0,
+                          dim.rdc =  dim.rdc
+                          )
+                          #thres.low = 0, thres.high = 1)
 
-      A_matrix <- debCAM::Amat(rCAM, k)
+      A_matrix <- t(debCAM::Amat(rCAM, k))
       T_matrix <- debCAM::Smat(rCAM, k)
     }
 
