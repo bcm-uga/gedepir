@@ -18,7 +18,7 @@
                        genescores,
                        showCategory = 10,
                        showLeadingGenes = FALSE,
-                       fdr = TRUE,
+                       fdr = FALSE,
                        multilevel = FALSE) {
   genes <- sort(genescores, decreasing = TRUE)
   if (multilevel == FALSE) {
@@ -59,7 +59,7 @@
   }
   #res <- res[which(res[, pv] < 0.05), ]
   res <- res[order(res[, pv], decreasing = FALSE), ]
-  respos <- res[res[, "ES"] > 0, ]
+  respos <- res#[res[, "ES"] > 0, ]
   if (nrow(respos) == 0) {
     return(NULL) #p <- print("No significant cell-type enrichment")
   } else {
