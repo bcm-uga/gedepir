@@ -57,7 +57,7 @@
   if (showLeadingGenes == TRUE) {
     res$leadingEdge <- unlist(lapply(fgseaRes$leadingEdge, paste, collapse = "_"))
   }
-  res <- res[which(res[, pv] < 0.05), ]
+  #res <- res[which(res[, pv] < 0.05), ]
   res <- res[order(res[, pv], decreasing = FALSE), ]
   respos <- res[res[, "ES"] > 0, ]
   if (nrow(respos) == 0) {
