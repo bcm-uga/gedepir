@@ -121,7 +121,7 @@ run_deconv <-
       # A_rna = matrix(tmp_rna)
       colnames(A_rna)=colnames(mix_matrix)
       A_matrix <- A_rna
-      T_matrix <- ICA_deconv$S
+      T_matrix <- S_or
       # OTHER APPROACH with NMF
       # Ap=ICA_deconv$A ; Ap[ICA_deconv$A<0] =0
       # Am=-ICA_deconv$A ; Am[ICA_deconv$A>0] =0
