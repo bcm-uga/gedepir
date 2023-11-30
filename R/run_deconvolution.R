@@ -122,10 +122,8 @@ run_deconv <-
       # A_rna = matrix(tmp_rna)
       colnames(A_rna)=colnames(mix_matrix)
       A_matrix <- A_rna
-      if(ICA_orient)
-      T_matrix <- S_or
-      else 
-      T_matrix <- S
+      if(ICA_orient) T_matrix <- S_or
+      else  T_matrix <- S
 
       # OTHER APPROACH with NMF
       # Ap=ICA_deconv$A ; Ap[ICA_deconv$A<0] =0
