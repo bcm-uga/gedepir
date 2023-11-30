@@ -31,7 +31,7 @@ run_deconv <-
            method = "NMF",
            gene_length = NULL,
            gene_id = NULL,
-           cpu_number = NULL
+           cpu_number = NULL,
            ICA_orient=FALSE) {
     if (!{
       method %in% c("NMF", "ICA", "ICA-deconica", "CDSeq", "PREDE","debCAM")
