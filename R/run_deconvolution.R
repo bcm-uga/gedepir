@@ -31,7 +31,8 @@ run_deconv <-
            method = "NMF",
            gene_length = NULL,
            gene_id = NULL,
-           cpu_number = NULL) {
+           cpu_number = NULL
+           ICA_orient=FALSE) {
     if (!{
       method %in% c("NMF", "ICA", "ICA-deconica", "CDSeq", "PREDE","debCAM")
     }) {
@@ -121,7 +122,11 @@ run_deconv <-
       # A_rna = matrix(tmp_rna)
       colnames(A_rna)=colnames(mix_matrix)
       A_matrix <- A_rna
+      if(ICA_orient)
       T_matrix <- S_or
+      else 
+      T_matrix <- S
+
       # OTHER APPROACH with NMF
       # Ap=ICA_deconv$A ; Ap[ICA_deconv$A<0] =0
       # Am=-ICA_deconv$A ; Am[ICA_deconv$A>0] =0
