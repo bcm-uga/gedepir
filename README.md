@@ -13,7 +13,7 @@ To install dependencies and get the current version from GitHub:
 
 ```R
 BiocManager::install(c("NMF","fgsea"))
-remotes::install_github("bcm-uga/gedepir",build_vignettes = TRUE)
+remotes::install_github("bcm-uga/gedepir")
 ```
 
 ## Usage
