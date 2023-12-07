@@ -292,6 +292,61 @@ run_deconv <-
       A_matrix <- t(debCAM::Amat(rCAM, k))
       T_matrix <- debCAM::Smat(rCAM, k)
     }
-
-    return(list(A_matrix = A_matrix, T_matrix = T_matrix))
+    
+    # compute soft param for CDSeq
+    nsz <- ceiling(nrow(mix_matrix) * 1e-3 / 8)
+    nblock <- ceiling(nrow(mix_matrix) / (nsz * 1e3))
+    redFact <- 2^(1 + (median(log2(1 + mix_matrix[mix_matrix > 0])) %/% 5))
+    if (nblock>1) {
+      print(
+        sprintf(
+          "%d var in %d blocks of size %d with reduce factor %d",
+          nrow(mix_matrix),
+          nblock,
+          nsz * 1e3,
+          redFact
+          
+        )
+      )
+      gene_subset_size = nsz * 1e3
+    } else {
+      nblock = NULL
+      gene_subset_size = NULL
+    }
+    #compute soft param for debCAM
+    cluster.num = min(5*k, ncol(mix_matrix) - 1 )
+    if (nrow(mix_matrix) < 200) {
+      dim.rdc =max(cluster.num, nrow(mix_matrix)/10 ) 
+    }else dim.rdc= 10
+    
+    
+    # return res object 
+    return(list(A_matrix = A_matrix, 
+                T_matrix = T_matrix, 
+                run_params=list(
+                  "NMF"=list(method = "snmf/r",
+                             seed = 1),
+                  "ICA"=list(maxit = 1000,
+                             tol = 1e-09),
+                  "ICA-deconica"= list (score.meth = weighted.list,
+                                        summary.score = "weighted.mean"),
+                                         
+                  "PREDE" = list(W1 = NULL,
+                                 type = "GE",
+                                 K = k,
+                                 iters = 100,
+                                 rssDiffStop = 1e-5),
+                  "CDSeq"=list (  beta = 0.5,
+                                  alpha = 5,
+                                  mcmc_iterations = 300,
+                                  cpu_number = cpu_number,
+                                  dilution_factor = redFact,
+                                  block_number = nblock,
+                                  gene_subset_size =  gene_subset_size,
+                                  gene_length = as.vector(gene_length)),
+                  "debCAM"= list( cluster.num =cluster.num,
+                                  MG.num.thres = 1,
+                                  lof.thres =0,
+                                  dim.rdc =  dim.rdc)  
+                  )))
   }
