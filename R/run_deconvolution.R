@@ -328,12 +328,14 @@ run_deconv <-
                              seed = 1),
                   "ICA"=list(maxit = 1000,
                              tol = 1e-09),
-                  "ICA-deconica"= list (score.meth = weighted.list,
-                                        summary.score = "weighted.mean"),
+                  "ICA-deconica"= list (weighted.list = "generate_markers",
+                                        generate_markers.n = 30,
+                                        generate_markers.return = "gene.ranked",
+                                        weighted.score = "get_scores",
+                                        score.summary = "weighted.mean"),
                                          
                   "PREDE" = list(W1 = NULL,
                                  type = "GE",
-                                 K = k,
                                  iters = 100,
                                  rssDiffStop = 1e-5),
                   "CDSeq"=list (  beta = 0.5,
@@ -347,6 +349,7 @@ run_deconv <-
                   "debCAM"= list( cluster.num =cluster.num,
                                   MG.num.thres = 1,
                                   lof.thres =0,
-                                  dim.rdc =  dim.rdc)  
+                                  dim.rdc =  dim.rdc), 
+                  k=k
                   )))
   }
