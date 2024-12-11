@@ -3,7 +3,8 @@
 on:
   release:
     # Must republish release to update assets
-    types: [ published ]
+    #types: [ published ]
+    - testing
 
 name: Build and deploy wasm R package image
 
